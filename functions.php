@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDK_THEME_VERSION', '1.1.0' );
+define( 'BDK_THEME_VERSION', '1.2.0' );
 define( 'BDK_THEME_DIR', get_template_directory() );
 define( 'BDK_THEME_URI', get_template_directory_uri() );
 
@@ -175,6 +175,7 @@ require_once BDK_THEME_DIR . '/inc/photo-card-integration.php';
 require_once BDK_THEME_DIR . '/inc/demo-importer.php';
 require_once BDK_THEME_DIR . '/inc/reporter-portal.php';
 require_once BDK_THEME_DIR . '/inc/plugin-recommendations.php';
+require_once BDK_THEME_DIR . '/inc/ad-booking-manager.php';
 
 /**
  * Auto-create Opinions page if missing in database

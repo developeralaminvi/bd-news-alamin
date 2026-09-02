@@ -761,7 +761,7 @@ function bdk_display_ad_slot( $slot_key, $slot_title = 'বিজ্ঞাপন
 				<h4 style="font-size: 1rem; font-weight: 700; color: var(--primary-color); margin: 4px 0 2px;"><?php echo esc_html( $slot_title ); ?></h4>
 				<p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;"><?php echo esc_html( $slot_size ); ?> | প্রতিদিন ভিজিট করছেন দেশ-বিদেশের অগণিত পাঠক</p>
 			</div>
-			<a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" class="submit-brand-btn" style="padding: 0.45rem 1.2rem; font-size: 0.85rem; text-decoration: none;">
+			<a href="<?php echo esc_url( home_url( '/advertising' ) ); ?>" class="submit-brand-btn" style="padding: 0.45rem 1.2rem; font-size: 0.85rem; text-decoration: none;">
 				বিজ্ঞাপন দিন
 			</a>
 		</div>

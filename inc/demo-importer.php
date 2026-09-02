@@ -248,6 +248,12 @@ function bdk_run_demo_import_ajax() {
 			'content'  => 'পাঠকদের মূল্যবান গঠনমূলক মন্তব্য, সম্পাদকীয় পর্যালোচনা ও মুক্ত আলোচনা।',
 		),
 		array(
+			'title'    => 'বিজ্ঞাপন ও মূল্য তালিকা',
+			'slug'     => 'advertising',
+			'template' => 'page-advertising.php',
+			'content'  => 'দৈনিক বাংলাদেশের কথা পোর্টালে বিজ্ঞাপনের স্থান, সাইজ, রেট ও অনলাইন বুকিং।',
+		),
+		array(
 			'title'    => 'কুকি পলিসি',
 			'slug'     => 'cookies',
 			'template' => 'page-cookies.php',

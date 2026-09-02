@@ -86,7 +86,8 @@ $ig_url = get_theme_mod( 'bdk_social_instagram', 'https://instagram.com' );
           ?>
             <ul class="footer-links-list">
               <li><a href="<?php echo esc_url( home_url( '/about' ) ); ?>"><i class="fas fa-angle-right"></i> আমাদের সম্পর্কে</a></li>
-              <li><a href="<?php echo esc_url( home_url( '/contact' ) ); ?>"><i class="fas fa-angle-right"></i> যোগাযোগ ও বিজ্ঞাপন</a></li>
+              <li><a href="<?php echo esc_url( home_url( '/advertising' ) ); ?>"><i class="fas fa-angle-right" style="color: #f59e0b;"></i> 📢 বিজ্ঞাপন ও মূল্য তালিকা</a></li>
+              <li><a href="<?php echo esc_url( home_url( '/contact' ) ); ?>"><i class="fas fa-angle-right"></i> যোগাযোগ করুন</a></li>
               <li><a href="<?php echo esc_url( home_url( '/career' ) ); ?>"><i class="fas fa-angle-right" style="color: var(--accent-color);"></i> প্রতিনিধি নিয়োগ ফরম</a></li>
               <li><a href="<?php echo esc_url( home_url( '/privacy-policy' ) ); ?>"><i class="fas fa-angle-right"></i> গোপনীয়তা নীতি</a></li>
               <li><a href="<?php echo esc_url( home_url( '/terms' ) ); ?>"><i class="fas fa-angle-right"></i> ব্যবহারের শর্তাবলী</a></li>
