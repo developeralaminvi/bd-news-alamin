@@ -339,6 +339,13 @@ document.addEventListener('DOMContentLoaded', function () {
     generateCardBtn.addEventListener('click', () => {
       cardModal.classList.add('open');
     });
+  }
+
+  if (cardModalClose && cardModal) {
+    cardModalClose.addEventListener('click', () => {
+      cardModal.classList.remove('open');
+    });
+  }
 
   // 10. Ad Banner Click Analytics Tracker
   document.querySelectorAll('.bdk-trackable-ad-link').forEach(function (link) {

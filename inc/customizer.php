@@ -531,7 +531,7 @@ function bdk_display_ad_slot( $slot_key, $slot_title = 'বিজ্ঞাপন
 				$container_id = 'bdk_ad_slider_' . sanitize_html_class( $slot_key ) . '_' . rand( 100, 999 );
 				?>
 				<div id="<?php echo esc_attr( $wrapper_id ); ?>" class="theme-ad-wrapper bdk-multi-ad-slider" style="margin: 1.25rem auto; text-align: center; max-width: 100%; position: relative;">
-					<span class="ad-badge" style="display:inline-block; font-size:9px; font-weight:700; color:#888; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">বিজ্ঞাপন (অটো-রোটেশন)</span><br>
+					<span class="ad-badge" style="display:inline-block; font-size:9px; font-weight:700; color:#888; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">বিজ্ঞাপন</span><br>
 					<div id="<?php echo esc_attr( $container_id ); ?>" class="bdk-ad-slides-container" style="position: relative;">
 						<?php foreach ( $banners as $idx => $b ) : ?>
 							<div class="bdk-ad-slide" data-banner="<?php echo esc_attr( $b['id'] ); ?>" style="display: <?php echo 0 === $idx ? 'block' : 'none'; ?>; transition: opacity 0.5s ease;">
@@ -590,6 +590,10 @@ function bdk_display_ad_slot( $slot_key, $slot_title = 'বিজ্ঞাপন
 						<a href="<?php echo esc_url( ! empty( $banner['link'] ) ? $banner['link'] : '#' ); ?>" target="_blank" rel="noopener nofollow" class="bdk-trackable-ad-link" data-slot="<?php echo esc_attr( $slot_key ); ?>" data-banner="<?php echo esc_attr( $b_id ); ?>" style="display:inline-block; max-width:100%; line-height:0; text-decoration:none;">
 							<img src="<?php echo esc_url( $banner['image'] ); ?>" alt="<?php echo esc_attr( $banner['title'] ); ?>" class="theme-ad-img" style="height: auto; max-width: 100%; border-radius: 4px; display:inline-block; box-shadow: var(--card-shadow);">
 						</a>
+					<?php elseif ( ! empty( $banner['code'] ) ) : ?>
+						<div class="bdk-trackable-ad-code" data-slot="<?php echo esc_attr( $slot_key ); ?>" data-banner="<?php echo esc_attr( $b_id ); ?>">
+							<?php echo do_shortcode( $banner['code'] ); ?>
+						</div>
 					<?php endif; ?>
 				</div>
 				<?php
