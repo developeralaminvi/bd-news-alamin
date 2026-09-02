@@ -314,27 +314,6 @@ function bdk_customize_register( $wp_customize ) {
 		'priority'    => 35,
 		'description' => 'বিজ্ঞাপনের সকল সেটিংস, মাল্টি-অ্যাড রোটেশন, ক্লিক ও ইম্প্রেশন রিপোর্ট এখন ওয়ার্ডপ্রেস এডমিন ড্যাশবোর্ডের 📢 "বিজ্ঞাপন বুকিং" মেনুতে স্থানান্তর করা হয়েছে।',
 	) );
-			'input_attrs' => array( 'min' => 20, 'max' => 400, 'step' => 5 ),
-		) );
-
-		// ── Control 9: Image Fit Mode ───────────────────────────────────────
-		$wp_customize->add_setting( "{$slot_id}_fit", array(
-			'default'           => 'contain',
-			'sanitize_callback' => 'sanitize_key',
-		) );
-		$wp_customize->add_control( "{$slot_id}_fit", array(
-			'label'       => '৬. ইমেজ ফিট মোড (Fit / Crop Mode)',
-			'description' => 'ব্যানার যেন কোনোভাবেই কেটে না যায় তার জন্য রিকমেন্ডেড হলো "সম্পূর্ণ ফিট (Contain)"।',
-			'section'     => $slot_data['section_id'],
-			'type'        => 'select',
-			'choices'     => array(
-				'contain' => 'ক্রপ ছাড়া সম্পূর্ণ ফিট (Contain - রিকমেন্ডেড)',
-				'auto'    => 'প্রাকৃতিক সাইজ / অটো (Auto Aspect Ratio)',
-				'cover'   => 'স্থান পূর্ণ করে ক্রপ (Cover)',
-				'fill'    => 'টেনে সম্পূর্ণ সমান (Fill)',
-			),
-		) );
-	}
 
 
 	// ================= 5b. API & PRAYER / WEATHER SETTINGS =================
