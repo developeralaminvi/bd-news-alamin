@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 180" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="flagGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#007a4d"/>
+      <stop offset="50%" stop-color="#005a39"/>
+      <stop offset="100%" stop-color="#00442b"/>
+    </linearGradient>
+    <linearGradient id="circleRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3b30"/>
+      <stop offset="70%" stop-color="#d32f2f"/>
+      <stop offset="100%" stop-color="#991b1b"/>
+    </linearGradient>
+    <linearGradient id="goldHorn" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="50%" stop-color="#eab308"/>
+      <stop offset="100%" stop-color="#ca8a04"/>
+    </linearGradient>
+    <linearGradient id="textRed" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#b91c1c"/>
+    </linearGradient>
+    <linearGradient id="textGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#006a4e"/>
+    </linearGradient>
+
+    <!-- Filters for 3D effect and drop shadows -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-opacity="0.25"/>
+    </filter>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <g transform="translate(10, 10)">
+    <!-- 1. Green Flag Waving Shape -->
+    <path d="M 30 25 C 65 15, 105 35, 140 22 C 150 18, 155 40, 150 75 C 145 105, 155 125, 135 130 C 95 140, 60 115, 25 125 C 20 90, 15 55, 30 25 Z" 
+          fill="url(#flagGreen)" filter="url(#dropShadow)"/>
+
+    <!-- Flag fold wave highlight -->
+    <path d="M 65 24 C 85 45, 90 90, 85 125" stroke="#009660" stroke-width="4" fill="none" opacity="0.4"/>
+
+    <!-- 2. Red Sun Circle with 3D Ring -->
+    <circle cx="88" cy="74" r="32" fill="url(#circleRed)" filter="url(#dropShadow)" stroke="#ff7675" stroke-width="1.5"/>
+    
+    <!-- Bangladesh Map Silhouette (Stylized) in White -->
+    <path d="M 82 58 Q 88 56, 92 60 Q 98 62, 94 68 Q 97 73, 93 78 Q 96 85, 90 88 Q 84 89, 81 83 Q 78 78, 81 72 Q 77 65, 82 58 Z" 
+          fill="#ffffff" opacity="0.9" filter="url(#dropShadow)"/>
+
+    <!-- 3. Golden Megaphone on Left Top -->
+    <g transform="translate(18, 12) rotate(-15)" filter="url(#dropShadow)">
+      <path d="M 12 18 L 32 8 L 32 36 L 12 26 Z" fill="url(#goldHorn)"/>
+      <ellipse cx="32" cy="22" rx="4" ry="14" fill="#fef08a"/>
+      <rect x="2" y="19" width="10" height="6" rx="2" fill="#d97706"/>
+      <path d="M 8 25 L 6 36 L 12 36 L 13 25 Z" fill="#b45309"/>
+    </g>
+
+    <!-- 4. Microphone on Bottom -->
+    <g transform="translate(80, 92)" filter="url(#dropShadow)">
+      <rect x="4" y="0" width="10" height="18" rx="5" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+      <line x1="6" y1="4" x2="12" y2="4" stroke="#94a3b8" stroke-width="1"/>
+      <line x1="6" y1="8" x2="12" y2="8" stroke="#94a3b8" stroke-width="1"/>
+      <line x1="6" y1="12" x2="12" y2="12" stroke="#94a3b8" stroke-width="1"/>
+      <path d="M 1 8 C 1 18, 17 18, 17 8" fill="none" stroke="#64748b" stroke-width="1.8"/>
+      <line x1="9" y1="18" x2="9" y2="25" stroke="#64748b" stroke-width="2"/>
+      <line x1="3" y1="25" x2="15" y2="25" stroke="#64748b" stroke-width="2"/>
+    </g>
+
+    <!-- 5. Green Leaves on Right -->
+    <g transform="translate(138, 70)" filter="url(#dropShadow)">
+      <path d="M 0 25 C 10 10, 30 15, 35 25 C 25 35, 10 32, 0 25 Z" fill="#22c55e" stroke="#15803d" stroke-width="1"/>
+      <path d="M 12 24 C 22 5, 42 10, 45 20 C 35 30, 22 28, 12 24 Z" fill="#16a34a" stroke="#166534" stroke-width="1"/>
+      <circle cx="2" cy="27" r="3" fill="#15803d"/>
+    </g>
+
+    <!-- ================= 3D TYPOGRAPHY ================= -->
+
+    <!-- "দৈনিক" in 3D Red -->
+    <g filter="url(#dropShadow)">
+      <text x="175" y="48" font-family="'Hind Siliguri', 'Noto Sans Bengali', sans-serif" font-size="34" font-weight="900" fill="#7f1d1d" dx="1.5" dy="1.5">দৈনিক</text>
+      <text x="175" y="48" font-family="'Hind Siliguri', 'Noto Sans Bengali', sans-serif" font-size="34" font-weight="900" fill="url(#textRed)">দৈনিক</text>
+    </g>
+
+    <!-- "বাংলাদেশের" and "কথা" in 3D Green & Red -->
+    <g filter="url(#dropShadow)">
+      <!-- 3D Shadow layer -->
+      <text x="175" y="98" font-family="'Hind Siliguri', 'Noto Sans Bengali', sans-serif" font-size="48" font-weight="900" fill="#064e3b" dx="2" dy="2">
+        <tspan fill="#064e3b">বাংলা</tspan><tspan fill="#7f1d1d">দেশের </tspan><tspan fill="#064e3b">কথা</tspan>
+      </text>
+      <!-- Main Text layer -->
+      <text x="175" y="98" font-family="'Hind Siliguri', 'Noto Sans Bengali', sans-serif" font-size="48" font-weight="900">
+        <tspan fill="url(#textGreen)">বাংলা</tspan><tspan fill="url(#textRed)">দেশের </tspan><tspan fill="url(#textGreen)">কথা</tspan>
+      </text>
+    </g>
+
+    <!-- Subtitle: "সত্য ও ন্যায়ের পথে নিরন্তর" "সংবাদ পোর্টাল" -->
+    <g transform="translate(178, 124)">
+      <text x="0" y="0" font-family="'Hind Siliguri', 'Noto Sans Bengali', sans-serif" font-size="18" font-weight="800" fill="#111827">
+        সত্য ও ন্যায়ের পথে নিরন্তর
+      </text>
+      <text x="210" y="0" font-family="'Hind Siliguri', 'Noto Sans Bengali', sans-serif" font-size="16" font-weight="800" fill="#b91c1c">
+        সংবাদ পোর্টাল
+      </text>
+    </g>
+
+    <!-- Domain: "dainikbangladesherkotha.com" -->
+    <text x="30" y="160" font-family="'Outfit', sans-serif" font-size="28" font-weight="800" fill="#006a4e" letter-spacing="1">
+      dainikbangladesherkotha.com
+    </text>
+  </g>
+</svg>
