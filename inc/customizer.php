@@ -704,13 +704,131 @@ add_action( 'customize_register', 'bdk_customize_register' );
  * @param string $slot_size  Size hint text for placeholder
  */
 function bdk_display_ad_slot( $slot_key, $slot_title = 'বিজ্ঞাপন', $slot_size = 'বিজ্ঞাপন স্লট' ) {
-	// Check if this slot is enabled (Default: true)
+	// Check Theme Multi-Banner System First
+	$ad_slots_data = function_exists( 'bdk_get_theme_ad_slots' ) ? bdk_get_theme_ad_slots() : array();
+	$wrapper_id    = 'ad-slot-' . sanitize_html_class( $slot_key );
+
+	if ( isset( $ad_slots_data[ $slot_key ] ) ) {
+		$slot_cfg = $ad_slots_data[ $slot_key ];
+		
+		if ( empty( $slot_cfg['enable'] ) ) {
+			return; // Slot disabled
+		}
+
+		$banners = isset( $slot_cfg['banners'] ) ? array_values( $slot_cfg['banners'] ) : array();
+
+		if ( ! empty( $banners ) ) {
+			$mode    = isset( $slot_cfg['rotation_mode'] ) ? $slot_cfg['rotation_mode'] : 'reload';
+			$seconds = isset( $slot_cfg['rotate_seconds'] ) ? max( 2, absint( $slot_cfg['rotate_seconds'] ) ) : 5;
+
+			if ( 'reload' === $mode ) {
+				// Pick 1 random banner on page load
+				$banner = $banners[ array_rand( $banners ) ];
+				$b_id   = $banner['id'];
+				?>
+				<div id="<?php echo esc_attr( $wrapper_id ); ?>" class="theme-ad-wrapper bdk-multi-ad-wrapper" style="margin: 1.25rem auto; text-align: center; max-width: 100%;">
+					<span class="ad-badge" style="display:inline-block; font-size:9px; font-weight:700; color:#888; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">বিজ্ঞাপন</span><br>
+					<?php if ( ! empty( $banner['image'] ) ) : ?>
+						<a href="<?php echo esc_url( ! empty( $banner['link'] ) ? $banner['link'] : '#' ); ?>" target="_blank" rel="noopener nofollow" class="bdk-trackable-ad-link" data-slot="<?php echo esc_attr( $slot_key ); ?>" data-banner="<?php echo esc_attr( $b_id ); ?>" style="display:inline-block; max-width:100%; line-height:0; text-decoration:none;">
+							<img src="<?php echo esc_url( $banner['image'] ); ?>" alt="<?php echo esc_attr( $banner['title'] ); ?>" class="theme-ad-img" style="height: auto; max-width: 100%; border-radius: 4px; display:inline-block; box-shadow: var(--card-shadow);">
+						</a>
+					<?php elseif ( ! empty( $banner['code'] ) ) : ?>
+						<div class="bdk-trackable-ad-code" data-slot="<?php echo esc_attr( $slot_key ); ?>" data-banner="<?php echo esc_attr( $b_id ); ?>">
+							<?php echo do_shortcode( $banner['code'] ); ?>
+						</div>
+					<?php endif; ?>
+				</div>
+				<script>
+				(function(){
+					try {
+						var fd = new FormData();
+						fd.append('action', 'bdk_track_ad_impression');
+						fd.append('slot_id', '<?php echo esc_js( $slot_key ); ?>');
+						fd.append('banner_id', '<?php echo esc_js( $b_id ); ?>');
+						navigator.sendBeacon ? navigator.sendBeacon('<?php echo admin_url( "admin-ajax.php" ); ?>', fd) : fetch('<?php echo admin_url( "admin-ajax.php" ); ?>', {method:'POST', body:fd});
+					} catch(e){}
+				})();
+				</script>
+				<?php
+				return;
+			} elseif ( 'timer' === $mode && count( $banners ) > 1 ) {
+				// Auto Rotation Slider Mode
+				$container_id = 'bdk_ad_slider_' . sanitize_html_class( $slot_key ) . '_' . rand( 100, 999 );
+				?>
+				<div id="<?php echo esc_attr( $wrapper_id ); ?>" class="theme-ad-wrapper bdk-multi-ad-slider" style="margin: 1.25rem auto; text-align: center; max-width: 100%; position: relative;">
+					<span class="ad-badge" style="display:inline-block; font-size:9px; font-weight:700; color:#888; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">বিজ্ঞাপন (অটো-রোটেশন)</span><br>
+					<div id="<?php echo esc_attr( $container_id ); ?>" class="bdk-ad-slides-container" style="position: relative;">
+						<?php foreach ( $banners as $idx => $b ) : ?>
+							<div class="bdk-ad-slide" data-banner="<?php echo esc_attr( $b['id'] ); ?>" style="display: <?php echo 0 === $idx ? 'block' : 'none'; ?>; transition: opacity 0.5s ease;">
+								<?php if ( ! empty( $b['image'] ) ) : ?>
+									<a href="<?php echo esc_url( ! empty( $b['link'] ) ? $b['link'] : '#' ); ?>" target="_blank" rel="noopener nofollow" class="bdk-trackable-ad-link" data-slot="<?php echo esc_attr( $slot_key ); ?>" data-banner="<?php echo esc_attr( $b['id'] ); ?>" style="display:inline-block; max-width:100%; line-height:0; text-decoration:none;">
+										<img src="<?php echo esc_url( $b['image'] ); ?>" alt="<?php echo esc_attr( $b['title'] ); ?>" class="theme-ad-img" style="height: auto; max-width: 100%; border-radius: 4px; display:inline-block; box-shadow: var(--card-shadow);">
+									</a>
+								<?php elseif ( ! empty( $b['code'] ) ) : ?>
+									<div class="bdk-trackable-ad-code" data-slot="<?php echo esc_attr( $slot_key ); ?>" data-banner="<?php echo esc_attr( $b['id'] ); ?>">
+										<?php echo do_shortcode( $b['code'] ); ?>
+									</div>
+								<?php endif; ?>
+							</div>
+						<?php endforeach; ?>
+					</div>
+				</div>
+				<script>
+				(function(){
+					var container = document.getElementById('<?php echo esc_js( $container_id ); ?>');
+					if (!container) return;
+					var slides = container.querySelectorAll('.bdk-ad-slide');
+					if (slides.length <= 1) return;
+					var current = 0;
+
+					function trackImp(bId) {
+						try {
+							var fd = new FormData();
+							fd.append('action', 'bdk_track_ad_impression');
+							fd.append('slot_id', '<?php echo esc_js( $slot_key ); ?>');
+							fd.append('banner_id', bId);
+							navigator.sendBeacon ? navigator.sendBeacon('<?php echo admin_url( "admin-ajax.php" ); ?>', fd) : fetch('<?php echo admin_url( "admin-ajax.php" ); ?>', {method:'POST', body:fd});
+						} catch(e){}
+					}
+
+					// Track initial
+					trackImp(slides[0].getAttribute('data-banner'));
+
+					setInterval(function(){
+						slides[current].style.display = 'none';
+						current = (current + 1) % slides.length;
+						slides[current].style.display = 'block';
+						trackImp(slides[current].getAttribute('data-banner'));
+					}, <?php echo $seconds * 1000; ?>);
+				})();
+				</script>
+				<?php
+				return;
+			} else {
+				// Single / Fixed Mode
+				$banner = $banners[0];
+				$b_id   = $banner['id'];
+				?>
+				<div id="<?php echo esc_attr( $wrapper_id ); ?>" class="theme-ad-wrapper bdk-multi-ad-wrapper" style="margin: 1.25rem auto; text-align: center; max-width: 100%;">
+					<span class="ad-badge" style="display:inline-block; font-size:9px; font-weight:700; color:#888; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">বিজ্ঞাপন</span><br>
+					<?php if ( ! empty( $banner['image'] ) ) : ?>
+						<a href="<?php echo esc_url( ! empty( $banner['link'] ) ? $banner['link'] : '#' ); ?>" target="_blank" rel="noopener nofollow" class="bdk-trackable-ad-link" data-slot="<?php echo esc_attr( $slot_key ); ?>" data-banner="<?php echo esc_attr( $b_id ); ?>" style="display:inline-block; max-width:100%; line-height:0; text-decoration:none;">
+							<img src="<?php echo esc_url( $banner['image'] ); ?>" alt="<?php echo esc_attr( $banner['title'] ); ?>" class="theme-ad-img" style="height: auto; max-width: 100%; border-radius: 4px; display:inline-block; box-shadow: var(--card-shadow);">
+						</a>
+					<?php endif; ?>
+				</div>
+				<?php
+				return;
+			}
+		}
+	}
+
+	// Legacy Fallback (Customizer Settings)
 	$is_enabled = (bool) get_theme_mod( "{$slot_key}_enable", true );
 	if ( ! $is_enabled ) {
 		return;
 	}
 
-	// Device targeting & Mobile Hide
 	$global_hide_mobile = (bool) get_theme_mod( 'bdk_ads_hide_all_mobile', false );
 	$device_target      = get_theme_mod( "{$slot_key}_device_target", 'both' );
 	$hide_mobile        = (bool) get_theme_mod( "{$slot_key}_hide_mobile", false );
@@ -722,21 +840,16 @@ function bdk_display_ad_slot( $slot_key, $slot_title = 'বিজ্ঞাপন
 		$device_class = ' bdk-hide-on-desktop';
 	}
 
-	// Support both old single-key slots and new base-key slots
 	$ad_code  = get_theme_mod( "{$slot_key}_code", get_theme_mod( $slot_key, '' ) );
 	$ad_image = get_theme_mod( "{$slot_key}_image", '' );
 	$ad_link  = get_theme_mod( "{$slot_key}_link", '' );
 	$fit_mode = get_theme_mod( "{$slot_key}_fit", 'contain' );
 
-	$wrapper_id = 'ad-slot-' . sanitize_html_class( $slot_key );
-
 	if ( ! empty( $ad_code ) ) {
-		// Priority 1: HTML / AdSense code
 		echo '<div id="' . esc_attr( $wrapper_id ) . '" class="theme-ad-wrapper theme-ad-code-slot ' . esc_attr( $wrapper_id ) . esc_attr( $device_class ) . '" style="margin: 1.25rem auto; text-align: center; max-width: 100%;">';
 		echo do_shortcode( $ad_code );
 		echo '</div>';
 	} elseif ( ! empty( $ad_image ) ) {
-		// Priority 2: Uploaded image banner (100% Fit & No Crop)
 		$fit_inline = ( 'auto' === $fit_mode ) ? 'height: auto; max-width: 100%;' : 'object-fit: ' . esc_attr( $fit_mode ) . '; width: 100%; max-width: 100%;';
 		echo '<div id="' . esc_attr( $wrapper_id ) . '" class="theme-ad-wrapper theme-ad-image-banner ' . esc_attr( $wrapper_id ) . esc_attr( $device_class ) . '" style="margin: 1.25rem auto; text-align: center; max-width: 100%;">';
 		echo '<span class="ad-badge" style="display:inline-block; font-size:9px; font-weight:700; color:#888; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">বিজ্ঞাপন</span><br>';
@@ -749,7 +862,6 @@ function bdk_display_ad_slot( $slot_key, $slot_title = 'বিজ্ঞাপন
 		}
 		echo '</div>';
 	} else {
-		// Priority 3: Styled placeholder (only if global placeholder setting is enabled)
 		$show_placeholder = (bool) get_theme_mod( 'bdk_ads_show_placeholder', true );
 		if ( ! $show_placeholder ) {
 			return;

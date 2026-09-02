@@ -340,8 +340,24 @@ document.addEventListener('DOMContentLoaded', function () {
       cardModal.classList.add('open');
     });
 
-    cardModalClose?.addEventListener('click', () => {
-      cardModal.classList.remove('open');
+  // 10. Ad Banner Click Analytics Tracker
+  document.querySelectorAll('.bdk-trackable-ad-link').forEach(function (link) {
+    link.addEventListener('click', function () {
+      const slotId = link.getAttribute('data-slot');
+      const bannerId = link.getAttribute('data-banner');
+      if (slotId && bannerId && window.bdk_vars && window.bdk_vars.ajax_url) {
+        try {
+          const fd = new FormData();
+          fd.append('action', 'bdk_track_ad_click');
+          fd.append('slot_id', slotId);
+          fd.append('banner_id', bannerId);
+          if (navigator.sendBeacon) {
+            navigator.sendBeacon(window.bdk_vars.ajax_url, fd);
+          } else {
+            fetch(window.bdk_vars.ajax_url, { method: 'POST', body: fd });
+          }
+        } catch (e) {}
+      }
     });
-  }
+  });
 });
