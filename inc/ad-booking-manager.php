@@ -169,92 +169,116 @@ function bdk_render_ad_manager_page() {
 
 		<?php if ( 'bookings' === $active_tab ) : ?>
 			<!-- TAB 1: BOOKING APPLICATIONS TABLE -->
-			<div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04);">
-				<h3 style="margin-top: 0; color: #1e293b; font-size: 16px;">📋 জমাকৃত বিজ্ঞাপন বুকিং আবেদনের তালিকা:</h3>
+			<div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04);">
+				<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+					<h3 style="margin: 0; color: #1e293b; font-size: 16px; font-weight: 700;">📋 জমাকৃত বিজ্ঞাপন বুকিং আবেদনের তালিকা:</h3>
+					<span style="font-size: 13px; color: #64748b;">মোট আবেদন: <strong><?php echo esc_html( count( $bookings ) ); ?></strong> টি</span>
+				</div>
 				
 				<?php if ( empty( $bookings ) ) : ?>
-					<div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 30px; text-align: center; color: #64748b;">
+					<div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 35px; text-align: center; color: #64748b;">
 						<p style="margin: 0; font-size: 15px;">এখনও কোনো নতুন বিজ্ঞাপনের আবেদন জমা পড়েনি।</p>
 					</div>
 				<?php else : ?>
-					<table class="wp-list-table widefat fixed striped table-view-list">
-						<thead>
-							<tr>
-								<th style="width: 120px; font-weight: 700;">তারিখ ও সময়</th>
-								<th style="font-weight: 700;">আবেদনকারীর নাম ও প্রতিষ্ঠান</th>
-								<th style="font-weight: 700;">যোগাযোগ (ফোন/ইমেইল)</th>
-								<th style="font-weight: 700;">প্যাকেজ ও সময়কাল</th>
-								<th style="font-weight: 700;">বার্তা / বিবরণ</th>
-								<th style="width: 130px; font-weight: 700;">স্ট্যাটাস</th>
-								<th style="width: 100px; text-align: right; font-weight: 700;">অ্যাকশন</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php
-							// Sort latest first
-							$sorted_bookings = array_reverse( $bookings, true );
-							foreach ( $sorted_bookings as $b_id => $b ) :
-								$status = isset( $b['status'] ) ? $b['status'] : 'pending';
-								$status_bg = '#fef3c7';
-								$status_color = '#92400e';
-								$status_text = 'পেন্ডিং';
-
-								if ( 'contacted' === $status ) {
-									$status_bg = '#e0f2fe';
-									$status_color = '#0369a1';
-									$status_text = 'যোগাযোগ করা হয়েছে';
-								} elseif ( 'approved' === $status ) {
-									$status_bg = '#dcfce7';
-									$status_color = '#15803d';
-									$status_text = 'অনুমোদিত / কনফার্ম';
-								} elseif ( 'rejected' === $status ) {
-									$status_bg = '#fee2e2';
-									$status_color = '#b91c1c';
-									$status_text = 'বাতিল';
-								}
-							?>
-								<tr>
-									<td>
-										<strong style="color: #006a4e;"><?php echo esc_html( date( 'd/m/Y', strtotime( $b['date'] ) ) ); ?></strong><br>
-										<span style="font-size: 11px; color: #64748b;"><?php echo esc_html( date( 'h:i A', strtotime( $b['date'] ) ) ); ?></span>
-									</td>
-									<td>
-										<strong><?php echo esc_html( $b['name'] ); ?></strong><br>
-										<span style="font-size: 12px; color: #475569;"><?php echo esc_html( $b['company'] ); ?></span>
-									</td>
-									<td>
-										📞 <a href="tel:<?php echo esc_attr( $b['phone'] ); ?>" style="font-weight: 600; text-decoration: none; color: #006a4e;"><?php echo esc_html( $b['phone'] ); ?></a><br>
-										✉️ <a href="mailto:<?php echo esc_attr( $b['email'] ); ?>" style="font-size: 12px; color: #2563eb;"><?php echo esc_html( $b['email'] ); ?></a>
-									</td>
-									<td>
-										<span style="background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 12px; display: inline-block; margin-bottom: 3px; border: 1px solid #cbd5e1;"><?php echo esc_html( $b['package_name'] ); ?></span><br>
-										⏱️ সময়কাল: <strong><?php echo esc_html( $b['duration'] ); ?></strong>
-									</td>
-									<td>
-										<div style="font-size: 12px; color: #334155; max-height: 60px; overflow-y: auto;">
-											<?php echo esc_html( ! empty( $b['message'] ) ? $b['message'] : 'কোনো বিশেষ বার্তা নেই।' ); ?>
-										</div>
-									</td>
-									<td>
-										<form method="post" style="margin: 0;">
-											<?php wp_nonce_field( 'bdk_update_status_nonce' ); ?>
-											<input type="hidden" name="action" value="update_booking_status">
-											<input type="hidden" name="booking_id" value="<?php echo esc_attr( $b_id ); ?>">
-											<select name="status" onchange="this.form.submit()" style="font-size: 11px; padding: 2px 5px; border-radius: 4px; background: <?php echo esc_attr( $status_bg ); ?>; color: <?php echo esc_attr( $status_color ); ?>; font-weight: 700; border: 1px solid <?php echo esc_attr( $status_color ); ?>;">
-												<option value="pending" <?php selected( $status, 'pending' ); ?>>⏳ পেন্ডিং</option>
-												<option value="contacted" <?php selected( $status, 'contacted' ); ?>>📞 যোগাযোগ করা হয়েছে</option>
-												<option value="approved" <?php selected( $status, 'approved' ); ?>>✅ অনুমোদিত / কনফার্ম</option>
-												<option value="rejected" <?php selected( $status, 'rejected' ); ?>>❌ বাতিল</option>
-											</select>
-										</form>
-									</td>
-									<td style="text-align: right;">
-										<a href="<?php echo esc_url( wp_nonce_url( '?page=bdk-ad-manager&tab=bookings&action=delete_booking&id=' . $b_id, 'bdk_delete_booking_nonce' ) ); ?>" onclick="return confirm('আপনি কি নিশ্চিত যে এই আবেদনটি মুছে ফেলতে চান?');" style="color: #dc2626; font-size: 12px; font-weight: 600; text-decoration: none;">🗑️ মুছে ফেলুন</a>
-									</td>
+					<div style="overflow-x: auto;">
+						<table class="wp-list-table widefat fixed striped table-view-list" style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+							<thead>
+								<tr style="background: #f1f5f9;">
+									<th style="width: 110px; font-weight: 700; color: #334155;">তারিখ ও সময়</th>
+									<th style="width: 170px; font-weight: 700; color: #334155;">আবেদনকারী ও প্রতিষ্ঠান</th>
+									<th style="width: 160px; font-weight: 700; color: #334155;">যোগাযোগ মাধ্যম</th>
+									<th style="font-weight: 700; color: #334155;">বিজ্ঞাপন প্যাকেজ</th>
+									<th style="width: 90px; font-weight: 700; color: #334155;">সময়কাল</th>
+									<th style="width: 140px; font-weight: 700; color: #334155;">স্ট্যাটাস</th>
+									<th style="width: 120px; text-align: right; font-weight: 700; color: #334155;">অ্যাকশন</th>
 								</tr>
-							<?php endforeach; ?>
-						</tbody>
-					</table>
+							</thead>
+							<tbody>
+								<?php
+								// Sort latest first
+								$sorted_bookings = array_reverse( $bookings, true );
+								foreach ( $sorted_bookings as $b_id => $b ) :
+									$status = isset( $b['status'] ) ? $b['status'] : 'pending';
+									$status_bg = '#fef3c7';
+									$status_color = '#92400e';
+									$status_text = 'পেন্ডিং';
+
+									if ( 'contacted' === $status ) {
+										$status_bg = '#e0f2fe';
+										$status_color = '#0369a1';
+										$status_text = 'যোগাযোগ করা হয়েছে';
+									} elseif ( 'approved' === $status ) {
+										$status_bg = '#dcfce7';
+										$status_color = '#15803d';
+										$status_text = 'অনুমোদিত / কনফার্ম';
+									} elseif ( 'rejected' === $status ) {
+										$status_bg = '#fee2e2';
+										$status_color = '#b91c1c';
+										$status_text = 'বাতিল';
+									}
+
+									$msg_clean = ! empty( $b['message'] ) ? $b['message'] : 'কোনো বিশেষ বার্তা নেই।';
+								?>
+									<tr style="vertical-align: middle;">
+										<td>
+											<strong style="color: #006a4e; font-size: 13px;"><?php echo esc_html( date( 'd/m/Y', strtotime( $b['date'] ) ) ); ?></strong><br>
+											<span style="font-size: 11px; color: #64748b;"><?php echo esc_html( date( 'h:i A', strtotime( $b['date'] ) ) ); ?></span>
+										</td>
+										<td>
+											<strong style="font-size: 13px; color: #0f172a;"><?php echo esc_html( $b['name'] ); ?></strong><br>
+											<span style="font-size: 12px; color: #64748b; font-weight: 600;">🏢 <?php echo esc_html( $b['company'] ); ?></span>
+										</td>
+										<td>
+											📞 <a href="tel:<?php echo esc_attr( $b['phone'] ); ?>" style="font-weight: 700; text-decoration: none; color: #006a4e; font-size: 12px;"><?php echo esc_html( $b['phone'] ); ?></a><br>
+											✉️ <a href="mailto:<?php echo esc_attr( $b['email'] ); ?>" style="font-size: 11px; color: #2563eb; text-decoration: none;"><?php echo esc_html( $b['email'] ); ?></a>
+										</td>
+										<td>
+											<span style="background: #f1f5f9; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 12px; display: inline-block; color: #0f766e; border: 1px solid #cbd5e1;"><?php echo esc_html( $b['package_name'] ); ?></span>
+										</td>
+										<td>
+											<span style="font-size: 12px; font-weight: 700; color: #334155;">⏱️ <?php echo esc_html( $b['duration'] ); ?></span>
+										</td>
+										<td>
+											<form method="post" style="margin: 0;">
+												<?php wp_nonce_field( 'bdk_update_status_nonce' ); ?>
+												<input type="hidden" name="action" value="update_booking_status">
+												<input type="hidden" name="booking_id" value="<?php echo esc_attr( $b_id ); ?>">
+												<select name="status" onchange="this.form.submit()" style="font-size: 11px; padding: 3px 6px; border-radius: 6px; background: <?php echo esc_attr( $status_bg ); ?>; color: <?php echo esc_attr( $status_color ); ?>; font-weight: 700; border: 1px solid <?php echo esc_attr( $status_color ); ?>; cursor: pointer;">
+													<option value="pending" <?php selected( $status, 'pending' ); ?>>⏳ পেন্ডিং</option>
+													<option value="contacted" <?php selected( $status, 'contacted' ); ?>>📞 যোগাযোগ করা হয়েছে</option>
+													<option value="approved" <?php selected( $status, 'approved' ); ?>>✅ অনুমোদিত</option>
+													<option value="rejected" <?php selected( $status, 'rejected' ); ?>>❌ বাতিল</option>
+												</select>
+											</form>
+										</td>
+										<td style="text-align: right;">
+											<div style="display: flex; gap: 6px; justify-content: flex-end; align-items: center;">
+												<button type="button" class="button button-small button-secondary" onclick="openAdminBookingModal(this)"
+													data-id="<?php echo esc_attr( $b_id ); ?>"
+													data-name="<?php echo esc_attr( $b['name'] ); ?>"
+													data-company="<?php echo esc_attr( $b['company'] ); ?>"
+													data-phone="<?php echo esc_attr( $b['phone'] ); ?>"
+													data-email="<?php echo esc_attr( $b['email'] ); ?>"
+													data-package="<?php echo esc_attr( $b['package_name'] ); ?>"
+													data-duration="<?php echo esc_attr( $b['duration'] ); ?>"
+													data-date="<?php echo esc_attr( date( 'd/m/Y h:i A', strtotime( $b['date'] ) ) ); ?>"
+													data-status="<?php echo esc_attr( $status ); ?>"
+													data-statustext="<?php echo esc_attr( $status_text ); ?>"
+													data-statusbg="<?php echo esc_attr( $status_bg ); ?>"
+													data-statuscolor="<?php echo esc_attr( $status_color ); ?>"
+													data-message="<?php echo esc_attr( $msg_clean ); ?>"
+													style="font-weight: 700; color: #006a4e; border-color: #006a4e;">
+													👁️ দেখুন
+												</button>
+												
+												<a href="<?php echo esc_url( wp_nonce_url( '?page=bdk-ad-manager&tab=bookings&action=delete_booking&id=' . $b_id, 'bdk_delete_booking_nonce' ) ); ?>" onclick="return confirm('আপনি কি নিশ্চিত যে এই আবেদনটি মুছে ফেলতে চান?');" class="button button-small" style="color: #dc2626; border-color: #fca5a5; background: #fff5f5;">🗑️</a>
+											</div>
+										</td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
 				<?php endif; ?>
 			</div>
 
@@ -324,7 +348,135 @@ function bdk_render_ad_manager_page() {
 			</div>
 		<?php endif; ?>
 
+	<!-- WP Admin Booking Details Popup Modal -->
+	<div id="adminBookingDetailsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(3px); z-index: 99999; align-items: center; justify-content: center; padding: 15px;">
+		<div style="background: #ffffff; border-radius: 14px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); position: relative; font-family: 'Hind Siliguri', sans-serif;">
+			
+			<!-- Modal Header -->
+			<div style="background: #006a4e; color: #ffffff; padding: 16px 22px; border-radius: 14px 14px 0 0; display: flex; align-items: center; justify-content: space-between;">
+				<h3 style="margin: 0; color: #ffffff; font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+					<span>📋</span> বিজ্ঞাপন বুকিং আবেদনের পূর্ণাঙ্গ বিবরণ
+				</h3>
+				<button type="button" onclick="closeAdminBookingModal()" style="background: rgba(255,255,255,0.2); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+			</div>
+
+			<!-- Modal Body -->
+			<div style="padding: 22px;">
+				<!-- Contact Info Card -->
+				<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 18px;">
+					<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+						<div>
+							<h4 id="detailName" style="margin: 0; font-size: 18px; color: #0f172a; font-weight: 700;"></h4>
+							<span id="detailCompany" style="font-size: 13px; color: #64748b; font-weight: 600;"></span>
+						</div>
+						<span id="detailStatusBadge" style="padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 700;"></span>
+					</div>
+					<div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; border-top: 1px dashed #cbd5e1; padding-top: 12px;">
+						<a id="detailCallBtn" href="#" class="button button-primary" style="background: #10b981; border-color: #059669; font-weight: 700; height: 32px; display: inline-flex; align-items: center; gap: 6px;">📞 সরাসরি কল করুন</a>
+						<a id="detailMailBtn" href="#" class="button button-secondary" style="font-weight: 700; color: #2563eb; height: 32px; display: inline-flex; align-items: center; gap: 6px;">✉️ ইমেইল পাঠান</a>
+					</div>
+				</div>
+
+				<!-- Application Details Table -->
+				<table style="width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 13px;">
+					<tr style="border-bottom: 1px solid #f1f5f9;">
+						<td style="padding: 8px 0; color: #64748b; font-weight: 600; width: 150px;">আবেদনের তারিখ:</td>
+						<td id="detailDate" style="padding: 8px 0; color: #0f172a; font-weight: 700;"></td>
+					</tr>
+					<tr style="border-bottom: 1px solid #f1f5f9;">
+						<td style="padding: 8px 0; color: #64748b; font-weight: 600;">বিজ্ঞাপনের স্থান/প্যাকেজ:</td>
+						<td id="detailPackage" style="padding: 8px 0; color: #006a4e; font-weight: 700;"></td>
+					</tr>
+					<tr style="border-bottom: 1px solid #f1f5f9;">
+						<td style="padding: 8px 0; color: #64748b; font-weight: 600;">পছন্দকৃত সময়কাল:</td>
+						<td id="detailDuration" style="padding: 8px 0; color: #0f172a; font-weight: 700;"></td>
+					</tr>
+				</table>
+
+				<!-- Message / Details Box -->
+				<div style="margin-bottom: 20px;">
+					<label style="font-weight: 700; font-size: 13px; color: #334155; display: block; margin-bottom: 6px;">আবেদনকারীর বিশেষ বার্তা / বিবরণ:</label>
+					<div id="detailMessage" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-size: 13px; color: #1e293b; white-space: pre-wrap; min-height: 60px; line-height: 1.6;"></div>
+				</div>
+
+				<!-- Quick Status Update Form inside Modal -->
+				<div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+					<span style="font-weight: 700; font-size: 13px; color: #9a3412;">স্ট্যাটাস হালনাগাদ করুন:</span>
+					<form method="post" style="margin: 0; display: flex; gap: 8px; align-items: center;">
+						<?php wp_nonce_field( 'bdk_update_status_nonce' ); ?>
+						<input type="hidden" name="action" value="update_booking_status">
+						<input type="hidden" id="detailBookingIdInput" name="booking_id" value="">
+						<select id="detailStatusSelect" name="status" style="font-size: 12px; padding: 5px 10px; font-weight: 700; border-radius: 6px; border: 1px solid #fdba74;">
+							<option value="pending">⏳ পেন্ডিং</option>
+							<option value="contacted">📞 যোগাযোগ করা হয়েছে</option>
+							<option value="approved">✅ অনুমোদিত / কনফার্ম</option>
+							<option value="rejected">❌ বাতিল</option>
+						</select>
+						<button type="submit" class="button button-primary" style="background: #006a4e; border-color: #00442b; font-weight: 700;">হালনাগাদ করুন</button>
+					</form>
+				</div>
+
+			</div>
+		</div>
 	</div>
+
+	<script>
+	function openAdminBookingModal(btn) {
+		const modal = document.getElementById('adminBookingDetailsModal');
+		if (!modal) return;
+
+		const id = btn.getAttribute('data-id');
+		const name = btn.getAttribute('data-name');
+		const company = btn.getAttribute('data-company');
+		const phone = btn.getAttribute('data-phone');
+		const email = btn.getAttribute('data-email');
+		const pkg = btn.getAttribute('data-package');
+		const duration = btn.getAttribute('data-duration');
+		const date = btn.getAttribute('data-date');
+		const status = btn.getAttribute('data-status');
+		const statustext = btn.getAttribute('data-statustext');
+		const statusbg = btn.getAttribute('data-statusbg');
+		const statuscolor = btn.getAttribute('data-statuscolor');
+		const message = btn.getAttribute('data-message');
+
+		document.getElementById('detailName').textContent = name;
+		document.getElementById('detailCompany').textContent = '🏢 ' + company;
+		document.getElementById('detailDate').textContent = date;
+		document.getElementById('detailPackage').textContent = pkg;
+		document.getElementById('detailDuration').textContent = duration;
+		document.getElementById('detailMessage').textContent = message;
+		document.getElementById('detailBookingIdInput').value = id;
+
+		document.getElementById('detailCallBtn').setAttribute('href', 'tel:' + phone);
+		document.getElementById('detailMailBtn').setAttribute('href', 'mailto:' + email);
+
+		const badge = document.getElementById('detailStatusBadge');
+		badge.textContent = statustext;
+		badge.style.background = statusbg;
+		badge.style.color = statuscolor;
+		badge.style.border = '1px solid ' + statuscolor;
+
+		const select = document.getElementById('detailStatusSelect');
+		if (select) {
+			select.value = status;
+		}
+
+		modal.style.display = 'flex';
+	}
+
+	function closeAdminBookingModal() {
+		const modal = document.getElementById('adminBookingDetailsModal');
+		if (modal) {
+			modal.style.display = 'none';
+		}
+	}
+
+	document.getElementById('adminBookingDetailsModal')?.addEventListener('click', function(e) {
+		if (e.target === this) {
+			closeAdminBookingModal();
+		}
+	});
+	</script>
 	<?php
 }
 
