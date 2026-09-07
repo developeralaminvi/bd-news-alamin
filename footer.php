@@ -60,7 +60,7 @@ $ig_url = get_theme_mod( 'bdk_social_instagram', 'https://instagram.com' );
         </div>
 
         <!-- Col 2: News Category Quick Links -->
-        <div class="footer-col">
+        <div class="footer-col footer-col-categories">
           <h4>সংবাদ বিভাগসমূহ</h4>
           <?php
           if ( has_nav_menu( 'footer_categories' ) ) {
@@ -81,7 +81,7 @@ $ig_url = get_theme_mod( 'bdk_social_instagram', 'https://instagram.com' );
         </div>
 
         <!-- Col 3: Useful Links & Static Pages -->
-        <div class="footer-col">
+        <div class="footer-col footer-col-pages">
           <h4>গুরুত্বপূর্ণ পাতা</h4>
           <?php
           if ( has_nav_menu( 'footer_legal' ) ) {
@@ -94,9 +94,9 @@ $ig_url = get_theme_mod( 'bdk_social_instagram', 'https://instagram.com' );
           ?>
             <ul class="footer-links-list">
               <li><a href="<?php echo esc_url( home_url( '/about' ) ); ?>"><i class="fas fa-angle-right"></i> আমাদের সম্পর্কে</a></li>
-              <li><a href="<?php echo esc_url( home_url( '/advertising' ) ); ?>"><i class="fas fa-angle-right" style="color: #f59e0b;"></i> 📢 বিজ্ঞাপন ও মূল্য তালিকা</a></li>
+              <li><a href="<?php echo esc_url( home_url( '/advertising' ) ); ?>"><i class="fas fa-angle-right" style="color: #f59e0b;"></i> 📢 বিজ্ঞাপন ও রেট</a></li>
               <li><a href="<?php echo esc_url( home_url( '/contact' ) ); ?>"><i class="fas fa-angle-right"></i> যোগাযোগ করুন</a></li>
-              <li><a href="<?php echo esc_url( home_url( '/career' ) ); ?>"><i class="fas fa-angle-right" style="color: var(--accent-color);"></i> প্রতিনিধি নিয়োগ ফরম</a></li>
+              <li><a href="<?php echo esc_url( home_url( '/career' ) ); ?>"><i class="fas fa-angle-right" style="color: var(--accent-color);"></i> প্রতিনিধি নিয়োগ</a></li>
               <li><a href="<?php echo esc_url( home_url( '/privacy-policy' ) ); ?>"><i class="fas fa-angle-right"></i> গোপনীয়তা নীতি</a></li>
               <li><a href="<?php echo esc_url( home_url( '/terms' ) ); ?>"><i class="fas fa-angle-right"></i> ব্যবহারের শর্তাবলী</a></li>
               <li><a href="<?php echo esc_url( home_url( '/cookies' ) ); ?>"><i class="fas fa-angle-right"></i> কুকি পলিসি</a></li>
@@ -105,22 +105,22 @@ $ig_url = get_theme_mod( 'bdk_social_instagram', 'https://instagram.com' );
         </div>
 
         <!-- Col 4: Contact & Office Info -->
-        <div class="footer-col">
+        <div class="footer-col footer-col-office">
           <h4>অফিস ও নিউজরুম</h4>
           <div class="footer-contact-info">
-            <div class="info-item">
+            <div class="info-item info-address">
               <i class="fas fa-location-dot"></i>
               <span><?php echo esc_html( $office_address ); ?></span>
             </div>
-            <div class="info-item">
+            <div class="info-item info-phone">
               <i class="fas fa-phone-volume"></i>
               <span>ফোন: <a href="tel:<?php echo esc_attr( $phone_hotline ); ?>"><?php echo esc_html( $phone_hotline ); ?></a></span>
             </div>
-            <div class="info-item">
+            <div class="info-item info-whatsapp">
               <i class="fab fa-whatsapp"></i>
               <span>হোয়াটসঅ্যাপ: <a href="https://wa.me/88<?php echo esc_attr( $whatsapp_num ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $whatsapp_num ); ?></a></span>
             </div>
-            <div class="info-item">
+            <div class="info-item info-email">
               <i class="fas fa-envelope"></i>
               <span><a href="mailto:<?php echo esc_attr( $official_email ); ?>"><?php echo esc_html( $official_email ); ?></a></span>
             </div>
@@ -140,30 +140,44 @@ $ig_url = get_theme_mod( 'bdk_social_instagram', 'https://instagram.com' );
       <!-- Footer Editorial & Publisher Panel -->
       <div class="footer-editorial-panel">
         <?php if ( $show_item_1 ) : ?>
-        <div class="editorial-item">
-          <h5><?php echo esc_html( $editor_publisher_title ); ?></h5>
-          <p><?php echo esc_html( $editor_publisher ); ?></p>
+        <div class="editorial-item editorial-item-publisher">
+          <span class="editorial-role-badge"><i class="fas fa-feather-pointed"></i> <?php echo esc_html( $editor_publisher_title ); ?></span>
+          <p class="editorial-name"><?php echo esc_html( $editor_publisher ); ?></p>
         </div>
         <?php endif; ?>
 
         <?php if ( $show_item_2 ) : ?>
-        <div class="editorial-item">
-          <h5><?php echo esc_html( $news_editor_title ); ?></h5>
-          <p><?php echo esc_html( $news_editor ); ?></p>
+        <div class="editorial-item editorial-item-news-editor">
+          <span class="editorial-role-badge"><i class="fas fa-pen-nib"></i> <?php echo esc_html( $news_editor_title ); ?></span>
+          <p class="editorial-name"><?php echo esc_html( $news_editor ); ?></p>
         </div>
         <?php endif; ?>
 
-        <?php if ( $show_item_3 ) : ?>
-        <div class="editorial-item">
-          <h5><?php echo esc_html( $editor_email_title ); ?></h5>
-          <p><a href="mailto:<?php echo esc_attr( $editor_email ); ?>" style="color: inherit; text-decoration: none;"><?php echo esc_html( $editor_email ); ?></a></p>
-        </div>
-        <?php endif; ?>
+        <?php if ( $show_item_3 || $show_item_4 ) : ?>
+        <div class="editorial-contact-group">
+          <?php if ( $show_item_3 ) : ?>
+          <div class="editorial-item editorial-item-contact editorial-item-email">
+            <div class="editorial-contact-chip">
+              <span class="editorial-chip-icon"><i class="fas fa-envelope"></i></span>
+              <div class="editorial-chip-content">
+                <h5><?php echo esc_html( $editor_email_title ); ?></h5>
+                <p><a href="mailto:<?php echo esc_attr( $editor_email ); ?>"><?php echo esc_html( $editor_email ); ?></a></p>
+              </div>
+            </div>
+          </div>
+          <?php endif; ?>
 
-        <?php if ( $show_item_4 ) : ?>
-        <div class="editorial-item">
-          <h5><?php echo esc_html( $phone_hotline_title ); ?></h5>
-          <p><a href="tel:<?php echo esc_attr( $phone_hotline ); ?>" style="color: inherit; text-decoration: none;"><?php echo esc_html( bdk_to_bengali_numerals( $phone_hotline ) ); ?></a></p>
+          <?php if ( $show_item_4 ) : ?>
+          <div class="editorial-item editorial-item-contact editorial-item-phone">
+            <div class="editorial-contact-chip">
+              <span class="editorial-chip-icon"><i class="fas fa-phone-volume"></i></span>
+              <div class="editorial-chip-content">
+                <h5><?php echo esc_html( $phone_hotline_title ); ?></h5>
+                <p><a href="tel:<?php echo esc_attr( $phone_hotline ); ?>"><?php echo esc_html( bdk_to_bengali_numerals( $phone_hotline ) ); ?></a></p>
+              </div>
+            </div>
+          </div>
+          <?php endif; ?>
         </div>
         <?php endif; ?>
       </div>
@@ -171,12 +185,15 @@ $ig_url = get_theme_mod( 'bdk_social_instagram', 'https://instagram.com' );
 
       <!-- Footer Bottom Copyright Bar -->
       <div class="footer-bottom-bar">
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-          <p>© <?php echo date( 'Y' ); ?> <?php echo bdk_get_site_name(); ?> (<?php echo esc_html( home_url() ); ?>) - সর্বস্বত্ব সংরক্ষিত।</p>
+        <div class="container footer-bottom-inner">
+          <p class="footer-copyright-text">© <?php echo date( 'Y' ); ?> <strong><?php echo bdk_get_site_name(); ?></strong> | সর্বস্বত্ব সংরক্ষিত।</p>
           <div class="footer-legal-links">
             <a href="<?php echo esc_url( home_url( '/about' ) ); ?>">আমাদের সম্পর্কে</a>
+            <span class="footer-link-sep">•</span>
             <a href="<?php echo esc_url( home_url( '/contact' ) ); ?>">যোগাযোগ</a>
+            <span class="footer-link-sep">•</span>
             <a href="<?php echo esc_url( home_url( '/privacy-policy' ) ); ?>">প্রাইভেসি</a>
+            <span class="footer-link-sep">•</span>
             <a href="<?php echo esc_url( home_url( '/terms' ) ); ?>">শর্তাবলী</a>
           </div>
         </div>

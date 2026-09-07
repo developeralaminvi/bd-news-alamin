@@ -518,20 +518,230 @@ body {
     gap: 1rem !important;
   }
 
+  /* ================= MODERN MOBILE FOOTER ================= */
+  .site-footer {
+    padding-top: 2.25rem !important;
+  }
+
   .footer-top-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1.5rem 1rem !important;
+    padding-bottom: 1.75rem !important;
   }
 
+  .footer-col-about {
+    grid-column: span 2 !important;
+    text-align: center !important;
+  }
+
+  .footer-col-about .footer-logo {
+    display: inline-block !important;
+  }
+
+  .footer-col-about .footer-logo img {
+    margin: 0 auto !important;
+  }
+
+  .footer-col-about p {
+    font-size: 0.85rem !important;
+    line-height: 1.6 !important;
+    max-width: 480px !important;
+    margin: 0.65rem auto 1rem !important;
+    color: #cbd5e1 !important;
+  }
+
+  .footer-col-about .footer-social-links {
+    justify-content: center !important;
+    gap: 0.5rem !important;
+  }
+
+  .footer-col-categories {
+    grid-column: span 1 !important;
+  }
+
+  .footer-col-pages {
+    grid-column: span 1 !important;
+  }
+
+  .footer-col h4 {
+    font-size: 0.95rem !important;
+    margin-bottom: 0.85rem !important;
+  }
+
+  .footer-links-list li {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .footer-links-list li a {
+    font-size: 0.82rem !important;
+  }
+
+  .footer-col-office {
+    grid-column: span 2 !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    border-radius: 14px !important;
+    padding: 1.25rem !important;
+  }
+
+  .footer-col-office h4 {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding-bottom: 0.5rem !important;
+    margin-bottom: 0.85rem !important;
+  }
+
+  .footer-contact-info .info-item {
+    gap: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  .footer-contact-info .info-item:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  /* Editorial Panel on Mobile */
   .footer-editorial-panel {
-    flex-direction: column;
-    align-items: flex-start;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 1.35rem 1.15rem !important;
+    margin: 1.75rem 0 !important;
+    gap: 0.85rem !important;
+    border-radius: 16px !important;
+    background: linear-gradient(160deg, #131d2e 0%, #0c1320 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+    position: relative !important;
   }
 
-  .footer-bottom-bar .container {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  .footer-editorial-panel::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 20% !important;
+    right: 20% !important;
+    height: 3px !important;
+    background: linear-gradient(90deg, transparent, #006a4e, #10b981, transparent) !important;
+    border-radius: 3px !important;
+  }
+
+  .editorial-item {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .editorial-item-publisher,
+  .editorial-item-news-editor {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 12px !important;
+    padding: 0.85rem 1rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .editorial-role-badge {
+    font-size: 0.74rem !important;
+    padding: 2px 10px !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  .editorial-name {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    line-height: 1.4 !important;
+    color: #ffffff !important;
+  }
+
+  .editorial-contact-group {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+    margin-top: 0.2rem !important;
+  }
+
+  .editorial-contact-chip {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px !important;
+    padding: 0.65rem 0.9rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.85rem !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+  }
+
+  .editorial-chip-icon {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 10px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .editorial-chip-content h5 {
+    font-size: 0.72rem !important;
+    margin: 0 0 2px 0 !important;
+    color: #94a3b8 !important;
+  }
+
+  .editorial-chip-content p {
+    font-size: 0.9rem !important;
+    margin: 0 !important;
+    word-break: break-all !important;
+  }
+
+  /* Footer Bottom Bar & Overlap Prevention */
+  .footer-bottom-bar {
+    padding: 1.25rem 0 4.5rem !important;
+    text-align: center !important;
+  }
+
+  .footer-bottom-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    text-align: center !important;
+  }
+
+  .footer-copyright-text {
+    font-size: 0.8rem !important;
+    color: #94a3b8 !important;
+    line-height: 1.5 !important;
+  }
+
+  .footer-legal-links {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 0.4rem 0.6rem !important;
+  }
+
+  .footer-legal-links a {
+    font-size: 0.78rem !important;
+    color: #cbd5e1 !important;
+    padding: 4px 10px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-radius: 6px !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    text-decoration: none !important;
+  }
+
+  .footer-link-sep {
+    display: none !important;
+  }
+
+  /* Back to Top Button on Mobile: Compact and Non-Intrusive */
+  .back-to-top-btn {
+    bottom: 18px !important;
+    right: 16px !important;
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
   }
 
   .mid-banner-ad .ad-slot-frame {
