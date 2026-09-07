@@ -20,7 +20,7 @@ function bdk_reporter_portal_auto_setup() {
 			$acc_id = wp_insert_post( array(
 				'post_title'   => 'সাংবাদিক লগইন ও নিয়োগ আবেদন',
 				'post_name'    => 'reporter-account',
-				'post_content' => 'দৈনিক বাংলাদেশের কথা সাংবাদিক পোর্টাল। লগইন করুন অথবা ডিজিটাল সাংবাদিক নিয়োগ ফরম পূরণ করে আবেদন করুন।',
+				'post_content' => bdk_get_site_name() . ' সাংবাদিক পোর্টাল। লগইন করুন অথবা ডিজিটাল সাংবাদিক নিয়োগ ফরম পূরণ করে আবেদন করুন।',
 				'post_status'  => 'publish',
 				'post_type'    => 'page',
 			) );
@@ -453,11 +453,11 @@ function bdk_notify_reporter_on_post_publish( $new_status, $old_status, $post ) 
 			$reporter_status = get_user_meta( $author_id, 'bdk_reporter_status', true );
 			if ( ! empty( $reporter_status ) ) {
 				$to      = $user->user_email;
-				$subject = 'অভিনন্দন! আপনার জমা দেওয়া সংবাদটি প্রকাশিত হয়েছে - দৈনিক বাংলাদেশের কথা';
+				$site_name = bdk_get_site_name();
+				$subject = 'অভিনন্দন! আপনার জমা দেওয়া সংবাদটি প্রকাশিত হয়েছে - ' . $site_name;
 				
 				$post_title = get_the_title( $post->ID );
 				$post_link  = get_permalink( $post->ID );
-				$site_name  = get_bloginfo( 'name' );
 
 				$message  = "প্রিয় " . esc_html( $user->display_name ) . ",\n\n";
 				$message .= "আপনার জমা দেওয়া সংবাদটি সফলভাবে পর্যালোচনা শেষে '{$site_name}' পোর্টালে প্রকাশ করা হয়েছে।\n\n";
@@ -567,9 +567,9 @@ function bdk_render_admin_reporters_page() {
 			$user = get_userdata( $target_user_id );
 			if ( $user ) {
 				$to      = $user->user_email;
-				$subject = 'অভিনন্দন! আপনার সাংবাদিক একাউন্টটি অনুমোদিত হয়েছে - দৈনিক বাংলাদেশের কথা';
+				$site    = bdk_get_site_name();
+				$subject = 'অভিনন্দন! আপনার সাংবাদিক একাউন্টটি অনুমোদিত হয়েছে - ' . $site;
 				$dash_url= home_url( '/reporter-dashboard' );
-				$site    = get_bloginfo( 'name' );
 
 				$message  = "প্রিয় " . esc_html( $user->display_name ) . ",\n\n";
 				$message .= "অভিনন্দন! '{$site}' পোর্টালে আপনার আবেদনকৃত ডিজিটাল সাংবাদিক একাউন্টটি পর্যালোচনা শেষে সফলভাবে অনুমোদন (Approved) করা হয়েছে।\n\n";
@@ -641,7 +641,7 @@ function bdk_render_admin_reporters_page() {
 <div class="wrap" style="max-width: 1200px;">
 	<h1 style="display: flex; align-items: center; gap: 10px; font-weight: 700;">
 		<span class="dashicons dashicons-id-alt" style="font-size: 32px; width: 32px; height: 32px;"></span>
-		দৈনিক বাংলাদেশের কথা — সাংবাদিক আবেদন ও প্রেস আইডি প্যানেল
+		<?php echo bdk_get_site_name(); ?> — সাংবাদিক আবেদন ও প্রেস আইডি প্যানেল
 	</h1>
 	<p class="description">ওয়েবসাইট থেকে আবেদনকারী সাংবাদিকদের তথ্য পর্যালোচনা, অনুমোদন/বাতিলকরণ এবং ডিজিটাল প্রেস আইডি কার্ড প্রিন্ট সুবিধা।</p>
 
@@ -883,7 +883,7 @@ function bdk_render_press_id_card( $user_id ) {
 	$phone       = get_user_meta( $user_id, 'bdk_reporter_phone', true ) ?: 'N/A';
 	$id_code     = get_user_meta( $user_id, 'bdk_reporter_id_code', true ) ?: 'BDK-REP-' . str_pad( $user_id, 4, '0', STR_PAD_LEFT );
 	$status      = get_user_meta( $user_id, 'bdk_reporter_status', true ) ?: 'pending';
-	$site_name   = get_bloginfo( 'name' );
+	$site_name   = bdk_get_site_name();
 	$site_url    = home_url( '/' );
 
 	$issue_date  = bdk_to_bengali_numerals( date( 'd/m/Y' ) );
@@ -1087,5 +1087,5 @@ function bdk_get_author_designation( $user_id ) {
 	if ( ! empty( $desig ) ) {
 		return $desig;
 	}
-	return 'সাংবাদিক ও বিশেষ প্রতিবেদক, দৈনিক বাংলাদেশের কথা';
+	return 'সাংবাদিক ও বিশেষ প্রতিবেদক, ' . bdk_get_site_name();
 }

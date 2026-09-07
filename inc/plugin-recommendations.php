@@ -35,7 +35,7 @@ function bdk_photo_card_plugin_notice() {
 			<div style="display: flex; align-items: center; gap: 12px;">
 				<span class="dashicons dashicons-format-image" style="font-size: 32px; width: 32px; height: 32px; color: #0284c7;"></span>
 				<div>
-					<h3 style="margin: 0 0 4px 0; color: #0369a1; font-size: 1rem; font-weight: 700;">দৈনিক বাংলাদেশের কথা — রিকমেন্ডেড প্লাগইন ইনস্টলেশন</h3>
+					<h3 style="margin: 0 0 4px 0; color: #0369a1; font-size: 1rem; font-weight: 700;"><?php echo bdk_get_site_name(); ?> — রিকমেন্ডেড প্লাগইন ইনস্টলেশন</h3>
 					<p style="margin: 0; color: #0c4a6e; font-size: 0.88rem;">সোশ্যাল মিডিয়ায় ১-ক্লিকে ব্রেকিং নিউজ ফটো কার্ড তৈরি ও ডাউনলোডের জন্য <strong>"Azad News Photo Card"</strong> প্লাগইনটি সক্রিয় করা প্রয়োজন।</p>
 				</div>
 			</div>

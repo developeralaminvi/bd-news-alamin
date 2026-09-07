@@ -80,7 +80,7 @@ $ig_url = get_theme_mod( 'bdk_social_instagram', 'https://instagram.com' );
   <section class="main-header">
     <div class="container">
       <!-- Brand Logo with actual SVG/Image graphic -->
-      <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="brand-logo" title="<?php bloginfo( 'name' ); ?>">
+      <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="brand-logo" title="<?php echo bdk_get_site_name(); ?>">
         <?php bdk_header_logo(); ?>
       </a>
 
@@ -448,7 +448,7 @@ $ig_url = get_theme_mod( 'bdk_social_instagram', 'https://instagram.com' );
             wp_reset_postdata();
           else :
           ?>
-            <a href="#" class="ticker-item"><i class="fas fa-circle"></i> দেশজুড়ে ডিজিটাল সাংবাদিকতার নতুন দিগন্ত উন্মোচন করল 'দৈনিক বাংলাদেশের কথা'</a>
+            <a href="#" class="ticker-item"><i class="fas fa-circle"></i> দেশজুড়ে ডিজিটাল সাংবাদিকতার নতুন দিগন্ত উন্মোচন করল '<?php echo bdk_get_site_name(); ?>'</a>
             <a href="#" class="ticker-item"><i class="fas fa-circle"></i> দেশের ৬৪ জেলায় প্রতিনিধি নিয়োগ কার্যক্রম শুরু হয়েছে, আবেদন ফরম অনলাইনে উন্মুক্ত</a>
             <a href="#" class="ticker-item"><i class="fas fa-circle"></i> জাতীয় অর্থনৈতিক পরিষদের গুরুত্বপূর্ণ বৈঠক আজ, একাধিক মেগা প্রকল্পে অনুমোদন</a>
             <a href="#" class="ticker-item"><i class="fas fa-circle"></i> জামালপুর সরিষাবাড়ীতে শান্তি নীড় কার্যালয়ে নতুন নিউজরুমের আধুনিকায়ন সম্পন্ন</a>

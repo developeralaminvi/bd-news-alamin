@@ -62,8 +62,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- 2. Social Community Box -->
 	<div class="special-highlight-card" style="background: linear-gradient(135deg, #006a4e 0%, #064e3b 100%); color: #fff; padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 2rem; box-shadow: 0 4px 15px rgba(0, 106, 78, 0.25);">
 		<h4 style="color: #fff; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">আমাদের ফেসবুক পেজে যুক্ত থাকুন</h4>
-		<p style="font-size: 0.85rem; opacity: 0.9; line-height: 1.5; margin-bottom: 1rem; color: #fff;">তাজা ও ব্রেকিং খবরের লাইভ আপডেট সবার আগে পেতে দৈনিক বাংলাদেশের কথা ফেসবুক পেজ ফলো করুন।</p>
-		<a href="https://www.facebook.com/dainikbangladesherkotha" target="_blank" rel="noopener" class="special-read-btn" style="background: #ffffff; color: #006a4e; font-weight: 700; padding: 0.4rem 1rem; border-radius: var(--radius-full); display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
+		<p style="font-size: 0.85rem; opacity: 0.9; line-height: 1.5; margin-bottom: 1rem; color: #fff;">তাজা ও ব্রেকিং খবরের লাইভ আপডেট সবার আগে পেতে <?php echo bdk_get_site_name(); ?> ফেসবুক পেজ ফলো করুন।</p>
+		<a href="<?php echo esc_url( get_theme_mod( 'bdk_social_facebook', 'https://www.facebook.com' ) ); ?>" target="_blank" rel="noopener" class="special-read-btn" style="background: #ffffff; color: #006a4e; font-weight: 700; padding: 0.4rem 1rem; border-radius: var(--radius-full); display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;">
 			<i class="fab fa-facebook-f"></i> ফেসবুক পেজে যান
 		</a>
 	</div>

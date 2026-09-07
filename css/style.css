@@ -3948,3 +3948,90 @@ ol {
   color: #ffffff !important;
   border-color: var(--primary-color) !important;
 }
+
+/* ==========================================================================
+   Dynamic Homepage Repeater Sections & Multi-Layouts (Design 1-8)
+   ========================================================================== */
+.bdk-homepage-section {
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+/* Design 5: 3-Column Modern Classic News Cards Grid */
+.bdk-three-col-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.bdk-classic-card {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+}
+
+.bdk-classic-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.bdk-classic-card .classic-img-wrap {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  position: relative;
+  display: block;
+}
+
+.bdk-classic-card .classic-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.bdk-classic-card:hover .classic-img-wrap img {
+  transform: scale(1.06);
+}
+
+.bdk-classic-card .classic-body {
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.bdk-classic-card h3 {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: var(--lh-normal);
+  margin-bottom: 0.5rem;
+}
+
+.bdk-classic-card h3 a {
+  color: var(--text-main);
+  transition: var(--transition-fast);
+}
+
+.bdk-classic-card:hover h3 a {
+  color: var(--primary-color);
+}
+
+.bdk-classic-card p {
+  font-size: var(--fs-sm);
+  color: var(--text-body);
+  line-height: var(--lh-relaxed);
+  margin-bottom: 0.75rem;
+  flex: 1;
+}
+
+/* Design 7: 1 Big Lead + 4 Horizontal Side List */
+.bdk-lead-list-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 1.5rem;
+}

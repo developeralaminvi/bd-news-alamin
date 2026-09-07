@@ -27,7 +27,8 @@ get_header();
 			
 			<div class="archive-news-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
 				<?php while ( have_posts() ) : the_post();
-					$yt_id    = get_post_meta( get_the_ID(), '_bdk_youtube_url', true ) ?: 'dQw4w9WgXcQ';
+					$yt_raw   = get_post_meta( get_the_ID(), '_bdk_youtube_url', true );
+					$yt_id    = ( function_exists( 'bdk_extract_youtube_id' ) && ! empty( $yt_raw ) ) ? bdk_extract_youtube_id( $yt_raw ) : ( $yt_raw ?: 'dQw4w9WgXcQ' );
 					$duration = get_post_meta( get_the_ID(), '_bdk_video_duration', true ) ?: '০৮:৪৫ মিনিট';
 				?>
 					<article class="world-magazine-card" style="background: var(--surface-color);">

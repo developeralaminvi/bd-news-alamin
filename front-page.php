@@ -236,540 +236,605 @@ get_header();
     </div>
   </main>
 
-  <!-- ================= 6. SECTION 1: NATIONAL & POLITICS ================= -->
-  <section class="section-national">
-    <div class="container">
-      <div class="section-header-block">
-        <div class="section-title-wrap">
-          <span class="title-bar-accent"></span>
-          <h2><a href="<?php echo esc_url( home_url( '/category/national' ) ); ?>">জাতীয় ও রাজনীতি</a></h2>
-        </div>
-        <a href="<?php echo esc_url( home_url( '/category/national' ) ); ?>" class="section-more-link">আরও দেখুন <i class="fas fa-chevron-right"></i></a>
-      </div>
+  <!-- ================= DYNAMIC HOMEPAGE SECTIONS (REPEATER DRIVEN) ================= -->
+  <?php
+  $homepage_sections = function_exists( 'bdk_get_homepage_sections' ) ? bdk_get_homepage_sections() : array();
+  $sec_count         = 0;
 
-      <div class="national-grid">
-        <div class="national-lead-wrapper">
-          <?php
-          $nat_args = array( 'posts_per_page' => 3, 'category_name' => 'national', 'ignore_sticky_posts' => 1 );
-          $nat_query = new WP_Query( $nat_args );
-          if ( ! $nat_query->have_posts() ) {
-            $nat_query = new WP_Query( array( 'posts_per_page' => 3, 'ignore_sticky_posts' => 1 ) );
-          }
+  if ( ! empty( $homepage_sections ) ) :
+    foreach ( $homepage_sections as $section ) :
+      if ( isset( $section['enabled'] ) && ! $section['enabled'] ) {
+        continue;
+      }
+      $sec_count++;
 
-          $nat_idx = 0;
-          if ( $nat_query->have_posts() ) :
-            while ( $nat_query->have_posts() ) : $nat_query->the_post();
-              if ( 0 === $nat_idx ) :
-          ?>
-                <article class="card-national-lead">
-                  <div class="img-box">
-                    <?php bdk_post_thumbnail( 'bdk-grid', '', get_the_title() ); ?>
-                  </div>
-                  <div class="content-box">
-                    <span class="hero-cat-tag" style="position: static; margin-bottom: 0.5rem; display: inline-block;">জাতীয়</span>
-                    <h3 style="font-size: 1.35rem; font-weight: 800; line-height: 1.35; margin-bottom: 0.5rem;">
-                      <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                    </h3>
-                    <p style="font-size: 0.92rem; color: var(--text-body); margin-bottom: 0.75rem;">
-                      <?php echo wp_trim_words( get_the_excerpt(), 22, '...' ); ?>
-                    </p>
-                    <div class="news-meta-row">
-                      <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
-                      <span><i class="far fa-user"></i> <?php the_author(); ?></span>
-                    </div>
-                  </div>
-                </article>
-          <?php
-              else :
-          ?>
-                <article class="card-national-sub">
-                  <div class="sub-img">
-                    <?php bdk_post_thumbnail( 'bdk-grid', '', get_the_title() ); ?>
-                  </div>
-                  <div class="sub-body">
-                    <h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-                    <div class="news-meta-row">
-                      <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
-                    </div>
-                  </div>
-                </article>
-          <?php
-              endif;
-              $nat_idx++;
-            endwhile;
-            wp_reset_postdata();
-          endif;
-          ?>
-        </div>
+      // Category handling
+      $cat_id   = isset( $section['category'] ) ? absint( $section['category'] ) : 0;
+      $cat_obj  = $cat_id > 0 ? get_category( $cat_id ) : null;
+      $cat_name = ( $cat_obj && ! is_wp_error( $cat_obj ) ) ? $cat_obj->name : 'সর্বশেষ সংবাদ';
+      $cat_link = ( $cat_obj && ! is_wp_error( $cat_obj ) ) ? get_category_link( $cat_obj->term_id ) : home_url( '/' );
 
-        <div class="politics-side-box">
-          <div class="widget-title-bar">
-            <h3><i class="fas fa-landmark" style="color: var(--primary-color);"></i> রাজনৈতিক অঙ্গন</h3>
-          </div>
+      // Section Title & Button Link
+      $sec_title = ! empty( $section['title'] ) ? $section['title'] : $cat_name;
+      $btn_text  = ! empty( $section['btn_text'] ) ? $section['btn_text'] : 'আরও দেখুন';
+      $layout    = ! empty( $section['layout'] ) ? $section['layout'] : 'design_1';
 
-          <div class="politics-list">
-            <?php
-            $pol_args = array( 'posts_per_page' => 3, 'category_name' => 'politics', 'ignore_sticky_posts' => 1 );
-            $pol_query = new WP_Query( $pol_args );
-            if ( ! $pol_query->have_posts() ) {
-              $pol_query = new WP_Query( array( 'posts_per_page' => 3, 'offset' => 4, 'ignore_sticky_posts' => 1 ) );
-            }
+      // Default posts count by layout
+      $default_counts = array(
+        'design_1' => 6,
+        'design_2' => 4,
+        'design_3' => 4,
+        'design_4' => 4,
+        'design_5' => 3,
+        'design_6' => 6,
+        'design_7' => 5,
+        'design_8' => 8,
+      );
+      $posts_per_page = ! empty( $section['posts_count'] ) ? absint( $section['posts_count'] ) : ( isset( $default_counts[ $layout ] ) ? $default_counts[ $layout ] : 6 );
 
-            if ( $pol_query->have_posts() ) :
-              while ( $pol_query->have_posts() ) : $pol_query->the_post();
-            ?>
-              <a href="<?php the_permalink(); ?>" class="politics-list-item">
-                <div class="thumb">
-                  <?php bdk_post_thumbnail( 'bdk-thumb', '', get_the_title() ); ?>
-                </div>
-                <div>
-                  <h4><?php the_title(); ?></h4>
-                  <span class="tab-item-time"><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
-                </div>
-              </a>
-            <?php
-              endwhile;
-              wp_reset_postdata();
-            endif;
-            ?>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+      // Query posts
+      $query_args = array(
+        'posts_per_page'      => $posts_per_page,
+        'ignore_sticky_posts' => 1,
+      );
+      if ( $cat_id > 0 ) {
+        $query_args['cat'] = $cat_id;
+      }
 
-  <!-- ================= 7. SECTION 2: SARADESH / DISTRICT NEWS (100% DYNAMIC) ================= -->
-  <section class="section-saradesh">
-    <div class="container">
-      <div class="section-header-block">
-        <div class="section-title-wrap">
-          <span class="title-bar-accent"></span>
-          <h2><a href="<?php echo esc_url( home_url( '/category/saradesh' ) ); ?>">সারাদেশ ও জেলা বার্তা</a></h2>
-        </div>
-        <a href="<?php echo esc_url( home_url( '/category/saradesh' ) ); ?>" class="section-more-link">সকল জেলা <i class="fas fa-chevron-right"></i></a>
-      </div>
-
-      <!-- Interactive Division Pills -->
-      <div class="division-tab-pills" id="saradeshDivisionTabs">
-        <button class="div-pill-btn active" data-division="all">সব বিভাগ</button>
-        <button class="div-pill-btn" data-division="mymensingh">ময়মনসিংহ ও জামালপুর</button>
-        <button class="div-pill-btn" data-division="dhaka">ঢাকা</button>
-        <button class="div-pill-btn" data-division="chittagong">চট্টগ্রাম</button>
-        <button class="div-pill-btn" data-division="rajshahi">রাজশাহী</button>
-        <button class="div-pill-btn" data-division="khulna">খুলনা</button>
-        <button class="div-pill-btn" data-division="barisal">বরিশাল</button>
-        <button class="div-pill-btn" data-division="sylhet">সিলেট</button>
-        <button class="div-pill-btn" data-division="rangpur">রংপুর</button>
-      </div>
-
-      <!-- Dynamic District Grid Cards -->
-      <div class="saradesh-grid" id="saradeshGridContainer">
-        <?php
-        // Query posts that have a district assigned, or category saradesh
-        $saradesh_args = array(
-          'posts_per_page'      => 8,
+      $sec_query = new WP_Query( $query_args );
+      // Fallback query if category has no posts yet
+      if ( ! $sec_query->have_posts() && $cat_id > 0 ) {
+        $sec_query = new WP_Query( array(
+          'posts_per_page'      => $posts_per_page,
           'ignore_sticky_posts' => 1,
-          'tax_query'           => array(
-            'relation' => 'OR',
-            array(
-              'taxonomy' => 'bdk_district',
-              'operator' => 'EXISTS',
-            ),
-            array(
-              'taxonomy' => 'category',
-              'field'    => 'slug',
-              'terms'    => array( 'saradesh', 'district' ),
-            ),
-          ),
-        );
-        $saradesh_query = new WP_Query( $saradesh_args );
-        if ( ! $saradesh_query->have_posts() ) {
-          $saradesh_query = new WP_Query( array( 'posts_per_page' => 4, 'ignore_sticky_posts' => 1 ) );
-        }
+        ) );
+      }
+  ?>
 
-        if ( $saradesh_query->have_posts() ) :
-          while ( $saradesh_query->have_posts() ) : $saradesh_query->the_post();
-            
-            // Determine District & Division dynamically
-            $d_terms = wp_get_object_terms( get_the_ID(), 'bdk_district' );
-            $district_display = 'সারাদেশ';
-            $div_slug = 'all';
+    <?php if ( 'design_1' === $layout ) : ?>
+      <!-- Design 1: 1 Lead + 2 Sub Cards + Right News List -->
+      <section class="bdk-homepage-section section-national layout-design-1" style="padding: 2.25rem 0; border-top: 1px solid var(--border-color);">
+        <div class="container">
+          <div class="section-header-block">
+            <div class="section-title-wrap">
+              <span class="title-bar-accent"></span>
+              <h2><a href="<?php echo esc_url( $cat_link ); ?>"><?php echo esc_html( $sec_title ); ?></a></h2>
+            </div>
+            <a href="<?php echo esc_url( $cat_link ); ?>" class="section-more-link"><?php echo esc_html( $btn_text ); ?> <i class="fas fa-chevron-right"></i></a>
+          </div>
 
-            if ( ! empty( $d_terms ) && ! is_wp_error( $d_terms ) ) {
-              $term = $d_terms[0];
-              $district_display = $term->name;
-              $parent_term = $term->parent ? get_term( $term->parent, 'bdk_district' ) : null;
-              $comb = $term->name . ' ' . ( $parent_term ? $parent_term->name : '' );
+          <div class="national-grid">
+            <div class="national-lead-wrapper">
+              <?php
+              $n_idx = 0;
+              $side_posts = array();
+              if ( $sec_query->have_posts() ) :
+                while ( $sec_query->have_posts() ) : $sec_query->the_post();
+                  if ( 0 === $n_idx ) :
+              ?>
+                    <article class="card-national-lead">
+                      <div class="img-box">
+                        <?php bdk_post_thumbnail( 'bdk-grid', '', get_the_title() ); ?>
+                      </div>
+                      <div class="content-box">
+                        <span class="hero-cat-tag" style="position: static; margin-bottom: 0.5rem; display: inline-block;"><?php echo esc_html( $cat_name ); ?></span>
+                        <h3 style="font-size: 1.35rem; font-weight: 800; line-height: 1.35; margin-bottom: 0.5rem;">
+                          <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                        </h3>
+                        <p style="font-size: 0.92rem; color: var(--text-body); margin-bottom: 0.75rem;">
+                          <?php echo wp_trim_words( get_the_excerpt(), 22, '...' ); ?>
+                        </p>
+                        <div class="news-meta-row">
+                          <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+                          <span><i class="far fa-user"></i> <?php the_author(); ?></span>
+                        </div>
+                      </div>
+                    </article>
+              <?php
+                  elseif ( $n_idx < 3 ) :
+              ?>
+                    <article class="card-national-sub">
+                      <div class="sub-img">
+                        <?php bdk_post_thumbnail( 'bdk-grid', '', get_the_title() ); ?>
+                      </div>
+                      <div class="sub-body">
+                        <h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
+                        <div class="news-meta-row">
+                          <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+                        </div>
+                      </div>
+                    </article>
+              <?php
+                  else :
+                    $side_posts[] = clone $post;
+                  endif;
+                  $n_idx++;
+                endwhile;
+                wp_reset_postdata();
+              endif;
+              ?>
+            </div>
 
-              if ( preg_match( '/(ময়মনসিংহ|জামালপুর|সরিষাবাড়ী|শেরপুর|নেত্রকোণা)/u', $comb ) ) {
-                $div_slug = 'mymensingh';
-              } elseif ( preg_match( '/(ঢাকা|গাজীপুর|নারায়ণগঞ্জ|টাঙ্গাইল|নরসিংদী|মুন্সীগঞ্জ|মানিকগঞ্জ)/u', $comb ) ) {
-                $div_slug = 'dhaka';
-              } elseif ( preg_match( '/(চট্টগ্রাম|কক্সবাজার|কুমিল্লা|ফেনী|নোয়াখালী)/u', $comb ) ) {
-                $div_slug = 'chittagong';
-              } elseif ( preg_match( '/(রাজশাহী|বগুড়া|পাবনা|সিরাজগঞ্জ|নাটোর)/u', $comb ) ) {
-                $div_slug = 'rajshahi';
-              } elseif ( preg_match( '/(সিলেট|মৌলভীবাজার|শ্রীমঙ্গল|সুনামগঞ্জ)/u', $comb ) ) {
-                $div_slug = 'sylhet';
-              } elseif ( preg_match( '/(খুলনা|যশোর|কুষ্টিয়া|বাগেরহাট)/u', $comb ) ) {
-                $div_slug = 'khulna';
-              } elseif ( preg_match( '/(বরিশাল|পটুয়াখালী|ভোলা)/u', $comb ) ) {
-                $div_slug = 'barisal';
-              } elseif ( preg_match( '/(রংপুর|দিনাজপুর|কুড়িগ্রাম)/u', $comb ) ) {
-                $div_slug = 'rangpur';
+            <div class="politics-side-box">
+              <div class="widget-title-bar">
+                <h3><i class="fas fa-newspaper" style="color: var(--primary-color);"></i> <?php echo esc_html( $sec_title ); ?> - আরও খবর</h3>
+              </div>
+              <div class="politics-list">
+                <?php
+                if ( ! empty( $side_posts ) ) :
+                  foreach ( $side_posts as $sp ) :
+                    $post = $sp;
+                    setup_postdata( $post );
+                ?>
+                  <a href="<?php the_permalink(); ?>" class="politics-list-item">
+                    <div class="thumb">
+                      <?php bdk_post_thumbnail( 'bdk-thumb', '', get_the_title() ); ?>
+                    </div>
+                    <div>
+                      <h4><?php the_title(); ?></h4>
+                      <span class="tab-item-time"><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+                    </div>
+                  </a>
+                <?php
+                  endforeach;
+                  wp_reset_postdata();
+                endif;
+                ?>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    <?php elseif ( 'design_2' === $layout ) : ?>
+      <!-- Design 2: 4-Column Overlay Grid -->
+      <section class="bdk-homepage-section section-entertainment layout-design-2" style="padding: 2.25rem 0; border-top: 1px solid var(--border-color);">
+        <div class="container">
+          <div class="section-header-block">
+            <div class="section-title-wrap">
+              <span class="title-bar-accent"></span>
+              <h2><a href="<?php echo esc_url( $cat_link ); ?>"><?php echo esc_html( $sec_title ); ?></a></h2>
+            </div>
+            <a href="<?php echo esc_url( $cat_link ); ?>" class="section-more-link"><?php echo esc_html( $btn_text ); ?> <i class="fas fa-chevron-right"></i></a>
+          </div>
+
+          <div class="lifestyle-cards-grid">
+            <?php
+            if ( $sec_query->have_posts() ) :
+              while ( $sec_query->have_posts() ) : $sec_query->the_post();
+            ?>
+              <article class="lifestyle-card">
+                <?php bdk_post_thumbnail( 'bdk-grid', '', get_the_title() ); ?>
+                <div class="lifestyle-overlay">
+                  <span class="lifestyle-tag"><?php echo esc_html( $cat_name ); ?></span>
+                  <h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
+                </div>
+              </article>
+            <?php
+              endwhile;
+              wp_reset_postdata();
+            endif;
+            ?>
+          </div>
+        </div>
+      </section>
+
+    <?php elseif ( 'design_3' === $layout ) : ?>
+      <!-- Design 3: 1 Big Highlight + Right 3 Compact Stack -->
+      <section class="bdk-homepage-section section-economy-matrix layout-design-3" style="padding: 2.25rem 0; border-top: 1px solid var(--border-color);">
+        <div class="container">
+          <div class="section-header-block">
+            <div class="section-title-wrap">
+              <span class="title-bar-accent"></span>
+              <h2><a href="<?php echo esc_url( $cat_link ); ?>"><?php echo esc_html( $sec_title ); ?></a></h2>
+            </div>
+            <a href="<?php echo esc_url( $cat_link ); ?>" class="section-more-link"><?php echo esc_html( $btn_text ); ?> <i class="fas fa-chevron-right"></i></a>
+          </div>
+
+          <div class="economy-matrix-grid">
+            <?php
+            $e_idx = 0;
+            $lead_e_post = null;
+            $sub_e_posts = array();
+
+            if ( $sec_query->have_posts() ) {
+              while ( $sec_query->have_posts() ) {
+                $sec_query->the_post();
+                if ( 0 === $e_idx ) {
+                  $lead_e_post = clone $post;
+                } else {
+                  $sub_e_posts[] = clone $post;
+                }
+                $e_idx++;
               }
-            } else {
-              // Distribute demo cards across divisions
-              $divisions_cycle = array( 'mymensingh', 'chittagong', 'sylhet', 'rajshahi' );
-              $div_slug = $divisions_cycle[ $saradesh_query->current_post % 4 ];
-              $district_display = 'সরিষাবাড়ী, জামালপুর';
+              wp_reset_postdata();
             }
-        ?>
-          <article class="district-news-card" data-division="<?php echo esc_attr( $div_slug ); ?>">
-            <a href="<?php the_permalink(); ?>" class="district-img-box">
-              <span class="district-badge-loc"><i class="fas fa-map-pin"></i> <?php echo esc_html( $district_display ); ?></span>
-              <?php bdk_post_thumbnail( 'bdk-grid', '', get_the_title() ); ?>
-            </a>
-            <div class="district-card-body">
-              <h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-              <div class="news-meta-row">
-                <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
-              </div>
-            </div>
-          </article>
-        <?php
-          endwhile;
-          wp_reset_postdata();
-        endif;
-        ?>
-      </div>
-    </div>
-  </section>
 
-  <!-- ================= 8. SECTION 3: ENTERTAINMENT & LIFESTYLE (DYNAMIC) ================= -->
-  <section class="section-entertainment">
-    <div class="container">
-      <div class="section-header-block">
-        <div class="section-title-wrap">
-          <span class="title-bar-accent"></span>
-          <h2><a href="<?php echo esc_url( home_url( '/category/entertainment' ) ); ?>">বিনোদন ও লাইফস্টাইল</a></h2>
-        </div>
-        <a href="<?php echo esc_url( home_url( '/category/entertainment' ) ); ?>" class="section-more-link">আরও বিনোদন <i class="fas fa-chevron-right"></i></a>
-      </div>
-
-      <div class="lifestyle-cards-grid">
-        <?php
-        $ent_args = array( 'posts_per_page' => 4, 'category_name' => 'entertainment,lifestyle', 'ignore_sticky_posts' => 1 );
-        $ent_query = new WP_Query( $ent_args );
-        if ( ! $ent_query->have_posts() ) {
-          $ent_query = new WP_Query( array( 'posts_per_page' => 4, 'offset' => 2, 'ignore_sticky_posts' => 1 ) );
-        }
-
-        if ( $ent_query->have_posts() ) :
-          while ( $ent_query->have_posts() ) : $ent_query->the_post();
-            $e_cats = get_the_category();
-            $e_tag = ! empty( $e_cats ) ? $e_cats[0]->name : 'বিনোদন';
-        ?>
-          <article class="lifestyle-card">
-            <?php bdk_post_thumbnail( 'bdk-grid', '', get_the_title() ); ?>
-            <div class="lifestyle-overlay">
-              <span class="lifestyle-tag"><?php echo esc_html( $e_tag ); ?></span>
-              <h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-            </div>
-          </article>
-        <?php
-          endwhile;
-          wp_reset_postdata();
-        endif;
-        ?>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= 8b. HOMEPAGE MID-CONTENT BANNER AD ================= -->
-  <div class="container homepage-mid-ad-container" style="margin-top: 1.75rem; margin-bottom: 1.75rem;">
-    <?php bdk_display_ad_slot( 'bdk_mid_ad', 'হোমপেজ মিড-কনটেন্ট বিজ্ঞাপন', '৯৭০×৯০ বা ৭২৮×৯০ Leaderboard' ); ?>
-  </div>
-
-  <!-- ================= 9. SECTION: ECONOMY & BUSINESS MATRIX WITH MARKET TICKER (DYNAMIC) ================= -->
-  <section class="section-economy-matrix">
-    <div class="container">
-      <div class="section-header-block">
-        <div class="section-title-wrap">
-          <span class="title-bar-accent"></span>
-          <h2><a href="<?php echo esc_url( home_url( '/category/economy' ) ); ?>">অর্থনীতি ও বাণিজ্য মেট্রিক্স</a></h2>
-        </div>
-        <a href="<?php echo esc_url( home_url( '/category/economy' ) ); ?>" class="section-more-link">বাজার বিশ্লেষণ <i class="fas fa-chevron-right"></i></a>
-      </div>
-
-      <!-- Live Stock & Currency Metrics Ticker Strip -->
-      <div class="stock-ticker-strip">
-        <div class="stock-ticker-label">
-          <i class="fas fa-chart-line"></i> বাজার আপডেট (লাইভ)
-        </div>
-        <div class="ticker-metrics-row" id="marketTickerRow">
-          <div class="metric-pill" id="dsexMetric">
-            <span>DSEX সূচক:</span>
-            <strong class="metric-val">৫,৪২০.৫০</strong>
-            <span class="trend-badge trend-up"><i class="fas fa-caret-up"></i> +০.৭৮%</span>
-          </div>
-          <div class="metric-pill" id="dollarMetric">
-            <span>ডলার রেট:</span>
-            <strong class="metric-val" id="usdRateText">৳১২১.৫০</strong>
-            <span class="trend-badge trend-up"><i class="fas fa-caret-up"></i> +০.১০</span>
-          </div>
-          <div class="metric-pill" id="goldMetric">
-            <span>স্বর্ণ (২২ ক্যারেট):</span>
-            <strong class="metric-val">৳১,২৮,৫০০/ভরি</strong>
-            <span class="trend-badge trend-down"><i class="fas fa-caret-down"></i> -৳৭৫০</span>
-          </div>
-          <div class="metric-pill" id="oilMetric">
-            <span>অপরিশোধিত তেল:</span>
-            <strong class="metric-val">$৮২.৪০/ব্যারেল</strong>
-            <span class="trend-badge trend-up"><i class="fas fa-caret-up"></i> +১.২%</span>
-          </div>
-          <div class="metric-pill" id="remitMetric">
-            <span>রেমিট্যান্স প্রবাহ:</span>
-            <strong class="metric-val">$২.২৫ বিলিয়ন</strong>
-            <span class="trend-badge trend-up"><i class="fas fa-caret-up"></i> রেকর্ড বৃদ্ধি</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Economy Matrix Grid -->
-      <div class="economy-matrix-grid">
-        <?php
-        $eco_args = array( 'posts_per_page' => 4, 'category_name' => 'economy,business', 'ignore_sticky_posts' => 1 );
-        $eco_query = new WP_Query( $eco_args );
-        if ( ! $eco_query->have_posts() ) {
-          $eco_query = new WP_Query( array( 'posts_per_page' => 4, 'offset' => 4, 'ignore_sticky_posts' => 1 ) );
-        }
-
-        $eco_idx = 0;
-        $lead_eco_post = null;
-        $sub_eco_posts = array();
-
-        if ( $eco_query->have_posts() ) {
-          while ( $eco_query->have_posts() ) {
-            $eco_query->the_post();
-            if ( 0 === $eco_idx ) {
-              $lead_eco_post = clone $post;
-            } else {
-              $sub_eco_posts[] = clone $post;
-            }
-            $eco_idx++;
-          }
-          wp_reset_postdata();
-        }
-
-        if ( $lead_eco_post ) :
-          global $post;
-          $post = $lead_eco_post;
-          setup_postdata( $post );
-        ?>
-          <!-- Lead Card with Market Badge -->
-          <article class="economy-lead-card">
-            <a href="<?php the_permalink(); ?>" class="economy-lead-img-box">
-              <span class="market-highlight-badge"><i class="fas fa-arrow-trend-up"></i> শীর্ষ বাণিজ্য সংবাদ</span>
-              <?php bdk_post_thumbnail( 'bdk-large', '', get_the_title() ); ?>
-            </a>
-            <div class="economy-lead-body">
-              <span class="hero-cat-tag" style="position: static; margin-bottom: 0.5rem; display: inline-block;">রপ্তানি খাত</span>
-              <h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
-              <p>
-                <?php echo wp_trim_words( get_the_excerpt(), 24, '...' ); ?>
-              </p>
-              <div class="news-meta-row" style="margin-top: auto;">
-                <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
-                <span><i class="far fa-user"></i> <?php the_author(); ?></span>
-              </div>
-            </div>
-          </article>
-        <?php
-          wp_reset_postdata();
-        endif;
-        ?>
-
-        <!-- Sub Stack 3 Compact Items -->
-        <div class="economy-sub-stack">
-          <?php
-          if ( ! empty( $sub_eco_posts ) ) :
-            foreach ( $sub_eco_posts as $sp ) :
-              $post = $sp;
+            if ( $lead_e_post ) :
+              $post = $lead_e_post;
               setup_postdata( $post );
-          ?>
-            <article class="economy-mini-item">
-              <div class="economy-mini-thumb">
-                <?php bdk_post_thumbnail( 'bdk-thumb', '', get_the_title() ); ?>
-              </div>
-              <div class="economy-mini-info">
-                <span style="font-size: 0.72rem; color: #10b981; font-weight: 700;"><i class="fas fa-bolt"></i> বাণিজ্য</span>
-                <h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-                <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
-              </div>
-            </article>
-          <?php
-            endforeach;
-            wp_reset_postdata();
-          endif;
-          ?>
-        </div>
-      </div>
-    </div>
-  </section>
+            ?>
+              <article class="economy-lead-card">
+                <a href="<?php the_permalink(); ?>" class="economy-lead-img-box">
+                  <span class="market-highlight-badge"><i class="fas fa-arrow-trend-up"></i> শীর্ষ সংবাদ</span>
+                  <?php bdk_post_thumbnail( 'bdk-large', '', get_the_title() ); ?>
+                </a>
+                <div class="economy-lead-body">
+                  <span class="hero-cat-tag" style="position: static; margin-bottom: 0.5rem; display: inline-block;"><?php echo esc_html( $cat_name ); ?></span>
+                  <h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
+                  <p><?php echo wp_trim_words( get_the_excerpt(), 24, '...' ); ?></p>
+                  <div class="news-meta-row" style="margin-top: auto;">
+                    <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+                    <span><i class="far fa-user"></i> <?php the_author(); ?></span>
+                  </div>
+                </div>
+              </article>
+            <?php
+              wp_reset_postdata();
+            endif;
+            ?>
 
-  <!-- ================= 10. SECTION 4: SPORTS & TECH (DYNAMIC) ================= -->
-  <section class="section-sports-tech">
-    <div class="container">
-      <div class="sports-tech-grid">
-        
-        <!-- Sports Column -->
-        <div class="sports-col-box">
+            <div class="economy-sub-stack">
+              <?php
+              if ( ! empty( $sub_e_posts ) ) :
+                foreach ( $sub_e_posts as $sp ) :
+                  $post = $sp;
+                  setup_postdata( $post );
+              ?>
+                <article class="economy-mini-item">
+                  <div class="economy-mini-thumb">
+                    <?php bdk_post_thumbnail( 'bdk-thumb', '', get_the_title() ); ?>
+                  </div>
+                  <div class="economy-mini-info">
+                    <span style="font-size: 0.72rem; color: #10b981; font-weight: 700;"><i class="fas fa-bolt"></i> <?php echo esc_html( $cat_name ); ?></span>
+                    <h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+                  </div>
+                </article>
+              <?php
+                endforeach;
+                wp_reset_postdata();
+              endif;
+              ?>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    <?php elseif ( 'design_4' === $layout ) : ?>
+      <!-- Design 4: 4-Column Magazine Grid -->
+      <section class="bdk-homepage-section section-world-news layout-design-4" style="padding: 2.25rem 0; border-top: 1px solid var(--border-color);">
+        <div class="container">
           <div class="section-header-block">
             <div class="section-title-wrap">
-              <span class="title-bar-accent"></span>
-              <h2><a href="<?php echo esc_url( home_url( '/category/sports' ) ); ?>">খেলাধুলা</a></h2>
+              <span class="title-bar-accent" style="background: #2563eb;"></span>
+              <h2><a href="<?php echo esc_url( $cat_link ); ?>"><?php echo esc_html( $sec_title ); ?></a></h2>
             </div>
-            <a href="<?php echo esc_url( home_url( '/category/sports' ) ); ?>" class="section-more-link">স্কোর ও খবর <i class="fas fa-chevron-right"></i></a>
+            <a href="<?php echo esc_url( $cat_link ); ?>" class="section-more-link"><?php echo esc_html( $btn_text ); ?> <i class="fas fa-chevron-right"></i></a>
           </div>
 
-          <div class="featured-sub-split">
+          <div class="world-magazine-grid">
             <?php
-            $sports_args = array( 'posts_per_page' => 3, 'category_name' => 'sports', 'ignore_sticky_posts' => 1 );
-            $sports_query = new WP_Query( $sports_args );
-            if ( ! $sports_query->have_posts() ) {
-              $sports_query = new WP_Query( array( 'posts_per_page' => 3, 'offset' => 1, 'ignore_sticky_posts' => 1 ) );
-            }
-
-            $sp_idx = 0;
-            if ( $sports_query->have_posts() ) :
-              while ( $sports_query->have_posts() ) : $sports_query->the_post();
-                if ( 0 === $sp_idx ) :
+            if ( $sec_query->have_posts() ) :
+              while ( $sec_query->have_posts() ) : $sec_query->the_post();
             ?>
-                  <article class="sports-main-card">
-                    <?php bdk_post_thumbnail( 'bdk-large', '', get_the_title() ); ?>
-                    <div class="sports-main-overlay">
-                      <span class="special-tag">ক্রিকেট ও ফুটবল</span>
-                      <h3><a href="<?php the_permalink(); ?>" style="color: #fff;"><?php the_title(); ?></a></h3>
-                    </div>
-                  </article>
+              <article class="world-magazine-card">
+                <div class="world-card-img-wrap">
+                  <span class="read-time-pill"><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+                  <?php bdk_post_thumbnail( 'bdk-grid', '', get_the_title() ); ?>
+                </div>
+                <div class="world-card-body">
+                  <h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
+                  <p><?php echo wp_trim_words( get_the_excerpt(), 15, '...' ); ?></p>
+                  <div class="news-meta-row" style="margin-top: auto;">
+                    <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+                    <span><i class="far fa-user"></i> <?php the_author(); ?></span>
+                  </div>
+                </div>
+              </article>
             <?php
-                else :
-            ?>
-                  <article class="sub-lead-card">
-                    <div class="sub-lead-body">
-                      <span class="badge-type" style="color: var(--accent-color); font-weight: 700; font-size: 0.75rem;">খেলা</span>
-                      <h4 style="font-size: 0.95rem; font-weight: 700; margin-top: 0.25rem;"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-                    </div>
-                  </article>
-            <?php
-                endif;
-                $sp_idx++;
               endwhile;
               wp_reset_postdata();
             endif;
             ?>
           </div>
         </div>
+      </section>
 
-        <!-- Technology Column -->
-        <div class="tech-col-box">
+    <?php elseif ( 'design_5' === $layout ) : ?>
+      <!-- Design 5: 3-Column Modern News Grid -->
+      <section class="bdk-homepage-section layout-design-5" style="padding: 2.25rem 0; border-top: 1px solid var(--border-color);">
+        <div class="container">
           <div class="section-header-block">
             <div class="section-title-wrap">
               <span class="title-bar-accent"></span>
-              <h2><a href="<?php echo esc_url( home_url( '/category/tech' ) ); ?>">বিজ্ঞান ও প্রযুক্তি</a></h2>
+              <h2><a href="<?php echo esc_url( $cat_link ); ?>"><?php echo esc_html( $sec_title ); ?></a></h2>
             </div>
-            <a href="<?php echo esc_url( home_url( '/category/tech' ) ); ?>" class="section-more-link">প্রযুক্তি জগৎ <i class="fas fa-chevron-right"></i></a>
+            <a href="<?php echo esc_url( $cat_link ); ?>" class="section-more-link"><?php echo esc_html( $btn_text ); ?> <i class="fas fa-chevron-right"></i></a>
           </div>
 
-          <div class="featured-sub-split">
+          <div class="bdk-three-col-grid">
             <?php
-            $tech_args = array( 'posts_per_page' => 3, 'category_name' => 'tech,technology', 'ignore_sticky_posts' => 1 );
-            $tech_query = new WP_Query( $tech_args );
-            if ( ! $tech_query->have_posts() ) {
-              $tech_query = new WP_Query( array( 'posts_per_page' => 3, 'offset' => 3, 'ignore_sticky_posts' => 1 ) );
-            }
-
-            $tc_idx = 0;
-            if ( $tech_query->have_posts() ) :
-              while ( $tech_query->have_posts() ) : $tech_query->the_post();
-                if ( 0 === $tc_idx ) :
+            if ( $sec_query->have_posts() ) :
+              while ( $sec_query->have_posts() ) : $sec_query->the_post();
             ?>
-                  <article class="sports-main-card">
-                    <?php bdk_post_thumbnail( 'bdk-large', '', get_the_title() ); ?>
-                    <div class="sports-main-overlay">
-                      <span class="special-tag" style="background: #2563eb;">প্রযুক্তি উদ্ভাবন</span>
-                      <h3><a href="<?php the_permalink(); ?>" style="color: #fff;"><?php the_title(); ?></a></h3>
-                    </div>
-                  </article>
+              <article class="bdk-classic-card">
+                <a href="<?php the_permalink(); ?>" class="classic-img-wrap">
+                  <span class="hero-cat-tag"><?php echo esc_html( $cat_name ); ?></span>
+                  <?php bdk_post_thumbnail( 'bdk-grid', '', get_the_title() ); ?>
+                </a>
+                <div class="classic-body">
+                  <h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
+                  <p><?php echo wp_trim_words( get_the_excerpt(), 18, '...' ); ?></p>
+                  <div class="news-meta-row" style="margin-top: auto;">
+                    <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+                    <span><i class="far fa-user"></i> <?php the_author(); ?></span>
+                  </div>
+                </div>
+              </article>
             <?php
-                else :
-            ?>
-                  <article class="sub-lead-card">
-                    <div class="sub-lead-body">
-                      <span class="badge-type" style="color: #2563eb; font-weight: 700; font-size: 0.75rem;">আইটি সংবাদ</span>
-                      <h4 style="font-size: 0.95rem; font-weight: 700; margin-top: 0.25rem;"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-                    </div>
-                  </article>
-            <?php
-                endif;
-                $tc_idx++;
               endwhile;
               wp_reset_postdata();
             endif;
             ?>
           </div>
         </div>
+      </section>
 
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= 11. SECTION: WORLD NEWS MAGAZINE GRID (DYNAMIC) ================= -->
-  <section class="section-world-news">
-    <div class="container">
-      <div class="section-header-block">
-        <div class="section-title-wrap">
-          <span class="title-bar-accent" style="background: #2563eb;"></span>
-          <h2><a href="<?php echo esc_url( home_url( '/category/international' ) ); ?>">আন্তর্জাতিক ও বিশ্ব দৃষ্টিভঙ্গি</a></h2>
-        </div>
-        <a href="<?php echo esc_url( home_url( '/category/international' ) ); ?>" class="section-more-link">বিশ্ব সংবাদ <i class="fas fa-chevron-right"></i></a>
-      </div>
-
-      <div class="world-magazine-grid">
-        <?php
-        $world_args = array( 'posts_per_page' => 4, 'category_name' => 'international,world', 'ignore_sticky_posts' => 1 );
-        $world_query = new WP_Query( $world_args );
-        if ( ! $world_query->have_posts() ) {
-          $world_query = new WP_Query( array( 'posts_per_page' => 4, 'offset' => 5, 'ignore_sticky_posts' => 1 ) );
-        }
-
-        if ( $world_query->have_posts() ) :
-          while ( $world_query->have_posts() ) : $world_query->the_post();
-        ?>
-          <article class="world-magazine-card">
-            <div class="world-card-img-wrap">
-              <span class="read-time-pill"><i class="far fa-clock"></i> ৩ মিনিট</span>
-              <?php bdk_post_thumbnail( 'bdk-grid', '', get_the_title() ); ?>
+    <?php elseif ( 'design_6' === $layout ) : ?>
+      <!-- Design 6: 2-Column Split Cards -->
+      <section class="bdk-homepage-section section-sports-tech layout-design-6" style="padding: 2.25rem 0; border-top: 1px solid var(--border-color);">
+        <div class="container">
+          <div class="section-header-block">
+            <div class="section-title-wrap">
+              <span class="title-bar-accent"></span>
+              <h2><a href="<?php echo esc_url( $cat_link ); ?>"><?php echo esc_html( $sec_title ); ?></a></h2>
             </div>
-            <div class="world-card-body">
-              <h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-              <p><?php echo wp_trim_words( get_the_excerpt(), 15, '...' ); ?></p>
-              <div class="news-meta-row" style="margin-top: auto;">
-                <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+            <a href="<?php echo esc_url( $cat_link ); ?>" class="section-more-link"><?php echo esc_html( $btn_text ); ?> <i class="fas fa-chevron-right"></i></a>
+          </div>
+
+          <div class="sports-tech-grid">
+            <?php
+            $half_posts = array();
+            $other_half = array();
+            $tot = 0;
+            if ( $sec_query->have_posts() ) {
+              while ( $sec_query->have_posts() ) {
+                $sec_query->the_post();
+                if ( $tot % 2 === 0 ) {
+                  $half_posts[] = clone $post;
+                } else {
+                  $other_half[] = clone $post;
+                }
+                $tot++;
+              }
+              wp_reset_postdata();
+            }
+            $cols = array( $half_posts, $other_half );
+            foreach ( $cols as $c_idx => $c_posts ) :
+              if ( empty( $c_posts ) ) continue;
+            ?>
+              <div class="sports-col-box">
+                <div class="featured-sub-split">
+                  <?php foreach ( $c_posts as $p_idx => $p ) :
+                    $post = $p;
+                    setup_postdata( $post );
+                    if ( 0 === $p_idx ) :
+                  ?>
+                    <article class="sports-main-card">
+                      <?php bdk_post_thumbnail( 'bdk-large', '', get_the_title() ); ?>
+                      <div class="sports-main-overlay">
+                        <span class="special-tag"><?php echo esc_html( $cat_name ); ?></span>
+                        <h3><a href="<?php the_permalink(); ?>" style="color: #fff;"><?php the_title(); ?></a></h3>
+                      </div>
+                    </article>
+                  <?php else : ?>
+                    <article class="sub-lead-card">
+                      <div class="sub-lead-body">
+                        <span class="badge-type" style="color: var(--accent-color); font-weight: 700; font-size: 0.75rem;"><?php echo esc_html( $cat_name ); ?></span>
+                        <h4 style="font-size: 0.95rem; font-weight: 700; margin-top: 0.25rem;"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+                      </div>
+                    </article>
+                  <?php
+                    endif;
+                  endforeach;
+                  wp_reset_postdata();
+                  ?>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      </section>
+
+    <?php elseif ( 'design_7' === $layout ) : ?>
+      <!-- Design 7: 1 Big Lead + 4 Horizontal List Items -->
+      <section class="bdk-homepage-section layout-design-7" style="padding: 2.25rem 0; border-top: 1px solid var(--border-color);">
+        <div class="container">
+          <div class="section-header-block">
+            <div class="section-title-wrap">
+              <span class="title-bar-accent"></span>
+              <h2><a href="<?php echo esc_url( $cat_link ); ?>"><?php echo esc_html( $sec_title ); ?></a></h2>
+            </div>
+            <a href="<?php echo esc_url( $cat_link ); ?>" class="section-more-link"><?php echo esc_html( $btn_text ); ?> <i class="fas fa-chevron-right"></i></a>
+          </div>
+
+          <div class="bdk-lead-list-grid">
+            <?php
+            $d7_idx = 0;
+            $d7_lead = null;
+            $d7_list = array();
+            if ( $sec_query->have_posts() ) {
+              while ( $sec_query->have_posts() ) {
+                $sec_query->the_post();
+                if ( 0 === $d7_idx ) {
+                  $d7_lead = clone $post;
+                } else {
+                  $d7_list[] = clone $post;
+                }
+                $d7_idx++;
+              }
+              wp_reset_postdata();
+            }
+
+            if ( $d7_lead ) :
+              $post = $d7_lead;
+              setup_postdata( $post );
+            ?>
+              <article class="card-national-lead" style="grid-column: span 1; grid-template-columns: 1fr;">
+                <div class="img-box" style="min-height: 220px;">
+                  <?php bdk_post_thumbnail( 'bdk-large', '', get_the_title() ); ?>
+                </div>
+                <div class="content-box">
+                  <span class="hero-cat-tag" style="position: static; margin-bottom: 0.5rem; display: inline-block;"><?php echo esc_html( $cat_name ); ?></span>
+                  <h3 style="font-size: 1.3rem; font-weight: 800; line-height: 1.35; margin-bottom: 0.5rem;">
+                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                  </h3>
+                  <p style="font-size: 0.9rem; color: var(--text-body); margin-bottom: 0.75rem;">
+                    <?php echo wp_trim_words( get_the_excerpt(), 20, '...' ); ?>
+                  </p>
+                  <div class="news-meta-row">
+                    <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+                    <span><i class="far fa-user"></i> <?php the_author(); ?></span>
+                  </div>
+                </div>
+              </article>
+            <?php
+              wp_reset_postdata();
+            endif;
+            ?>
+
+            <div class="politics-side-box" style="padding: 1rem 1.25rem;">
+              <div class="politics-list">
+                <?php
+                if ( ! empty( $d7_list ) ) :
+                  foreach ( $d7_list as $lp ) :
+                    $post = $lp;
+                    setup_postdata( $post );
+                ?>
+                  <a href="<?php the_permalink(); ?>" class="politics-list-item">
+                    <div class="thumb" style="width: 90px; height: 68px;">
+                      <?php bdk_post_thumbnail( 'bdk-thumb', '', get_the_title() ); ?>
+                    </div>
+                    <div>
+                      <h4 style="font-size: 0.95rem; line-height: 1.35;"><?php the_title(); ?></h4>
+                      <span class="tab-item-time" style="font-size: 0.78rem;"><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+                    </div>
+                  </a>
+                <?php
+                  endforeach;
+                  wp_reset_postdata();
+                endif;
+                ?>
               </div>
             </div>
-          </article>
-        <?php
-          endwhile;
-          wp_reset_postdata();
-        endif;
-        ?>
+          </div>
+        </div>
+      </section>
+
+    <?php elseif ( 'design_8' === $layout ) : ?>
+      <!-- Design 8: Saradesh Interactive District Grid -->
+      <section class="bdk-homepage-section section-saradesh layout-design-8" style="padding: 2.25rem 0; border-top: 1px solid var(--border-color);">
+        <div class="container">
+          <div class="section-header-block">
+            <div class="section-title-wrap">
+              <span class="title-bar-accent"></span>
+              <h2><a href="<?php echo esc_url( $cat_link ); ?>"><?php echo esc_html( $sec_title ); ?></a></h2>
+            </div>
+            <a href="<?php echo esc_url( $cat_link ); ?>" class="section-more-link"><?php echo esc_html( $btn_text ); ?> <i class="fas fa-chevron-right"></i></a>
+          </div>
+
+          <!-- Interactive Division Pills -->
+          <div class="division-tab-pills" id="saradeshDivisionTabs_<?php echo esc_attr( $sec_count ); ?>">
+            <button class="div-pill-btn active" data-division="all">সব বিভাগ</button>
+            <button class="div-pill-btn" data-division="mymensingh">ময়মনসিংহ ও জামালপুর</button>
+            <button class="div-pill-btn" data-division="dhaka">ঢাকা</button>
+            <button class="div-pill-btn" data-division="chittagong">চট্টগ্রাম</button>
+            <button class="div-pill-btn" data-division="rajshahi">রাজশাহী</button>
+            <button class="div-pill-btn" data-division="khulna">খুলনা</button>
+            <button class="div-pill-btn" data-division="barisal">বরিশাল</button>
+            <button class="div-pill-btn" data-division="sylhet">সিলেট</button>
+            <button class="div-pill-btn" data-division="rangpur">রংপুর</button>
+          </div>
+
+          <!-- Dynamic District Grid Cards -->
+          <div class="saradesh-grid" id="saradeshGridContainer_<?php echo esc_attr( $sec_count ); ?>">
+            <?php
+            if ( $sec_query->have_posts() ) :
+              while ( $sec_query->have_posts() ) : $sec_query->the_post();
+                $d_terms = wp_get_object_terms( get_the_ID(), 'bdk_district' );
+                $district_display = 'সারাদেশ';
+                $div_slug = 'all';
+
+                if ( ! empty( $d_terms ) && ! is_wp_error( $d_terms ) ) {
+                  $term = $d_terms[0];
+                  $district_display = $term->name;
+                  $parent_term = $term->parent ? get_term( $term->parent, 'bdk_district' ) : null;
+                  $comb = $term->name . ' ' . ( $parent_term ? $parent_term->name : '' );
+
+                  if ( preg_match( '/(ময়মনসিংহ|জামালপুর|সরিষাবাড়ী|শেরপুর|নেত্রকোণা)/u', $comb ) ) {
+                    $div_slug = 'mymensingh';
+                  } elseif ( preg_match( '/(ঢাকা|গাজীপুর|নারায়ণগঞ্জ|টাঙ্গাইল|নরসিংদী|মুন্সীগঞ্জ|মানিকগঞ্জ)/u', $comb ) ) {
+                    $div_slug = 'dhaka';
+                  } elseif ( preg_match( '/(চট্টগ্রাম|কক্সবাজার|কুমিল্লা|ফেনী|নোয়াখালী)/u', $comb ) ) {
+                    $div_slug = 'chittagong';
+                  } elseif ( preg_match( '/(রাজশাহী|বগুড়া|পাবনা|সিরাজগঞ্জ|নাটোর)/u', $comb ) ) {
+                    $div_slug = 'rajshahi';
+                  } elseif ( preg_match( '/(সিলেট|মৌলভীবাজার|শ্রীমঙ্গল|সুনামগঞ্জ)/u', $comb ) ) {
+                    $div_slug = 'sylhet';
+                  } elseif ( preg_match( '/(খুলনা|যশোর|কুষ্টিয়া|বাগেরহাট)/u', $comb ) ) {
+                    $div_slug = 'khulna';
+                  } elseif ( preg_match( '/(বরিশাল|পটুয়াখালী|ভোলা)/u', $comb ) ) {
+                    $div_slug = 'barisal';
+                  } elseif ( preg_match( '/(রংপুর|দিনাজপুর|কুড়িগ্রাম)/u', $comb ) ) {
+                    $div_slug = 'rangpur';
+                  }
+                } else {
+                  $divisions_cycle = array( 'mymensingh', 'chittagong', 'sylhet', 'rajshahi' );
+                  $div_slug = $divisions_cycle[ $sec_query->current_post % 4 ];
+                  $district_display = 'সরিষাবাড়ী, জামালপুর';
+                }
+            ?>
+              <article class="district-news-card" data-division="<?php echo esc_attr( $div_slug ); ?>">
+                <a href="<?php the_permalink(); ?>" class="district-img-box">
+                  <span class="district-badge-loc"><i class="fas fa-map-pin"></i> <?php echo esc_html( $district_display ); ?></span>
+                  <?php bdk_post_thumbnail( 'bdk-grid', '', get_the_title() ); ?>
+                </a>
+                <div class="district-card-body">
+                  <h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
+                  <div class="news-meta-row">
+                    <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
+                  </div>
+                </div>
+              </article>
+            <?php
+              endwhile;
+              wp_reset_postdata();
+            endif;
+            ?>
+          </div>
+        </div>
+      </section>
+    <?php endif; ?>
+
+    <?php
+    // Show Mid Banner Ad after the 2nd section
+    if ( 2 === $sec_count && get_theme_mod( 'bdk_show_mid_ad', true ) ) :
+    ?>
+      <!-- Mid-Content Banner Ad -->
+      <div class="container homepage-mid-ad-container" style="margin-top: 1.75rem; margin-bottom: 1.75rem;">
+        <?php bdk_display_ad_slot( 'bdk_mid_ad', 'হোমপেজ মিড-কনটেন্ট বিজ্ঞাপন', '৯৭০×৯০ বা ৭২৮×৯০ Leaderboard' ); ?>
       </div>
-    </div>
-  </section>
+    <?php endif; ?>
+
+  <?php
+    endforeach;
+  endif;
+  ?>
 
   <!-- ================= 12. SECTION 5: MULTIMEDIA & VIDEO CAROUSEL (DYNAMIC) ================= -->
+  <?php if ( get_theme_mod( 'bdk_show_video_section', true ) ) : ?>
   <section class="section-video-carousel">
     <div class="container">
       <div class="section-header-block">
@@ -828,7 +893,7 @@ get_header();
             </button>
             <div class="video-main-caption">
               <span class="special-tag"><i class="fas fa-circle-dot"></i> বিশেষ টকশো</span>
-              <h3>সমসাময়িক রাজনীতি ও অর্থনীতির আগামী দিনের চ্যালেঞ্জ | দৈনিক বাংলাদেশের কথা বিশ্লেষণ</h3>
+              <h3>সমসাময়িক রাজনীতি ও অর্থনীতির আগামী দিনের চ্যালেঞ্জ | <?php echo bdk_get_site_name(); ?> বিশ্লেষণ</h3>
             </div>
           </div>
         <?php endif; ?>
@@ -872,8 +937,10 @@ get_header();
       </div>
     </div>
   </section>
+  <?php endif; ?>
 
   <!-- ================= 13. SECTION: INVESTIGATIVE SPOTLIGHT & SERIES TIMELINE (DYNAMIC) ================= -->
+  <?php if ( get_theme_mod( 'bdk_show_investigative_section', true ) ) : ?>
   <section class="section-investigative-series">
     <div class="container">
       <div class="section-header-block">
@@ -929,7 +996,7 @@ get_header();
                 <li><i class="fas fa-check-circle"></i> নদী শাসনের আধুনিক প্রযুক্তি ব্যবহারের কার্যকারিতা সমীক্ষা</li>
               </ul>
               <div class="news-meta-row" style="margin-top: auto; color: #94a3b8;">
-                <span style="color: #34d399;"><i class="fas fa-user-shield"></i> অনুসন্ধানী টিম, দৈনিক বাংলাদেশের কথা</span>
+                <span style="color: #34d399;"><i class="fas fa-user-shield"></i> অনুসন্ধানী টিম, <?php echo bdk_get_site_name(); ?></span>
                 <span><i class="far fa-clock"></i> <?php echo bdk_posted_time_ago(); ?></span>
               </div>
             </div>
@@ -963,8 +1030,10 @@ get_header();
       </div>
     </div>
   </section>
+  <?php endif; ?>
 
   <!-- ================= 14. SECTION 6: OPINION & READER COMMENTS (DYNAMIC) ================= -->
+  <?php if ( get_theme_mod( 'bdk_show_opinion_section', true ) ) : ?>
   <section class="section-opinion">
     <div class="container">
       <div class="section-header-block">
@@ -1073,8 +1142,10 @@ get_header();
       </div>
     </div>
   </section>
+  <?php endif; ?>
 
   <!-- ================= 15. SECTION 7: PHOTO GALLERY (DYNAMIC) ================= -->
+  <?php if ( get_theme_mod( 'bdk_show_photo_section', true ) ) : ?>
   <section class="section-photo-gallery">
     <div class="container">
       <div class="photo-gallery-full-wrap">
@@ -1136,6 +1207,7 @@ get_header();
       </div>
     </div>
   </section>
+  <?php endif; ?>
 
 <?php
 get_footer();

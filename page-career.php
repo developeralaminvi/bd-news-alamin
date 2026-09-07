@@ -33,7 +33,7 @@ get_header();
         <div class="static-content-box" style="background: var(--surface-color); padding: 2rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); line-height: 1.8;">
           <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.75rem;">আমাদের সাথে যোগ দিন</h2>
           <p>
-            'দৈনিক বাংলাদেশের কথা' পরিবারে আপনিও হতে পারেন একজন সাহসী সংবাদযোদ্ধা। আপনার জেলা, উপজেলা বা ক্যাম্পাসের অনিয়ম, উন্নয়ন ও সম্ভাবনার কথা সবার সামনে তুলে ধরতে আজই আবেদন করুন।
+            '<?php echo bdk_get_site_name(); ?>' পরিবারে আপনিও হতে পারেন একজন সাহসী সংবাদযোদ্ধা। আপনার জেলা, উপজেলা বা ক্যাম্পাসের অনিয়ম, উন্নয়ন ও সম্ভাবনার কথা সবার সামনে তুলে ধরতে আজই আবেদন করুন।
           </p>
 
           <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--primary-color); margin: 1.5rem 0 0.75rem;">প্রয়োজনীয় যোগ্যতা</h2>

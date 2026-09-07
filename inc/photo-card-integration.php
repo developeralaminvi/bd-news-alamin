@@ -24,7 +24,7 @@ function bdk_photo_card_shortcode( $atts ) {
 	$image   = $atts['image'] ? $atts['image'] : get_the_post_thumbnail_url( $post_id, 'large' );
 
 	if ( ! $image ) {
-		$image = 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=1000&auto=format&fit=crop&q=80';
+		$image = bdk_get_default_post_thumbnail_url();
 	}
 
 	ob_start();
@@ -39,7 +39,7 @@ function bdk_photo_card_shortcode( $atts ) {
 		
 		<div class="card-preview-canvas-box" id="photoCardCanvasContainer" style="position: relative; max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.15); border: 2px solid var(--primary-color);">
 			<div style="background: var(--primary-gradient); padding: 0.6rem 1rem; display: flex; justify-content: space-between; align-items: center; color: #fff;">
-				<strong style="font-size: 1.05rem;"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></strong>
+				<strong style="font-size: 1.05rem;"><?php echo bdk_get_site_name(); ?></strong>
 				<span style="font-size: 0.72rem; background: var(--accent-color); padding: 2px 6px; border-radius: 4px; font-weight: 700;">ব্রেকিং</span>
 			</div>
 			

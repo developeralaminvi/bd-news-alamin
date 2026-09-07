@@ -36,7 +36,7 @@ function bdk_demo_importer_page_callback() {
 					📥
 				</div>
 				<div>
-					<h1 style="margin: 0; font-size: 22px; color: #006a4e; font-weight: 700;">দৈনিক বাংলাদেশের কথা - ১-ক্লিক ডেমো ইমপোর্টার</h1>
+					<h1 style="margin: 0; font-size: 22px; color: #006a4e; font-weight: 700;"><?php echo bdk_get_site_name(); ?> - ১-ক্লিক ডেমো ইমপোর্টার</h1>
 					<p style="margin: 3px 0 0; color: #64748b; font-size: 14px;">এক ক্লিকেই তৈরি করুন সকল নিউজ পোস্ট, ভিডিও, পেজ (সঠিক টেমপ্লেট সহ) এবং মেনুবার।</p>
 				</div>
 			</div>
@@ -215,7 +215,7 @@ function bdk_run_demo_import_ajax() {
 			'title'    => 'আমাদের সম্পর্কে',
 			'slug'     => 'about',
 			'template' => 'page-about.php',
-			'content'  => 'দৈনিক বাংলাদেশের কথা একটি স্বাধীন, বস্তুনিষ্ঠ ও উন্নয়নমুখী জাতীয় অনলাইন গণমাধ্যম।',
+			'content'  => bdk_get_site_name() . ' একটি স্বাধীন, বস্তুনিষ্ঠ ও উন্নয়নমুখী জাতীয় অনলাইন গণমাধ্যম।',
 		),
 		array(
 			'title'    => 'যোগাযোগ ও বিজ্ঞাপন',
@@ -239,7 +239,7 @@ function bdk_run_demo_import_ajax() {
 			'title'    => 'ব্যবহারের শর্তাবলী',
 			'slug'     => 'terms',
 			'template' => 'page-terms.php',
-			'content'  => 'দৈনিক বাংলাদেশের কথা পোর্টাল ব্যবহারের সাধারণ নিয়মাবলী ও কপিরাইট শর্তাবলী।',
+			'content'  => bdk_get_site_name() . ' পোর্টাল ব্যবহারের সাধারণ নিয়মাবলী ও কপিরাইট শর্তাবলী।',
 		),
 		array(
 			'title'    => 'মতামত ও পাঠকদের প্রতিক্রিয়া',
@@ -251,7 +251,7 @@ function bdk_run_demo_import_ajax() {
 			'title'    => 'বিজ্ঞাপন ও মূল্য তালিকা',
 			'slug'     => 'advertising',
 			'template' => 'page-advertising.php',
-			'content'  => 'দৈনিক বাংলাদেশের কথা পোর্টালে বিজ্ঞাপনের স্থান, সাইজ, রেট ও অনলাইন বুকিং।',
+			'content'  => bdk_get_site_name() . ' পোর্টালে বিজ্ঞাপনের স্থান, সাইজ, রেট ও অনলাইন বুকিং।',
 		),
 		array(
 			'title'    => 'কুকি পলিসি',
@@ -356,7 +356,7 @@ function bdk_run_demo_import_ajax() {
 	// 4. Create Demo Video Posts
 	$demo_videos = array(
 		array(
-			'title'    => 'সমসাময়িক রাজনীতি ও অর্থনীতির আগামী দিনের চ্যালেঞ্জ | দৈনিক বাংলাদেশের কথা বিশ্লেষণ',
+			'title'    => 'সমসাময়িক রাজনীতি ও অর্থনীতির আগামী দিনের চ্যালেঞ্জ | ' . bdk_get_site_name() . ' বিশ্লেষণ',
 			'yt_id'    => 'dQw4w9WgXcQ',
 			'duration' => '১৫:২০ মিনিট',
 			'featured' => '1',
@@ -384,7 +384,7 @@ function bdk_run_demo_import_ajax() {
 	foreach ( $demo_videos as $dv ) {
 		$v_id = wp_insert_post( array(
 			'post_title'   => $dv['title'],
-			'post_content' => '<p>দৈনিক বাংলাদেশের কথা বিশেষ ভিডিও বুলেটিন ও বিশ্লেষণ।</p>',
+			'post_content' => '<p>' . bdk_get_site_name() . ' বিশেষ ভিডিও বুলেটিন ও বিশ্লেষণ।</p>',
 			'post_status'  => 'publish',
 			'post_type'    => 'bdk_video',
 		) );
@@ -449,7 +449,7 @@ function bdk_run_demo_import_ajax() {
 			array(
 				'author'  => 'মাহমুদুল হাসান',
 				'email'   => 'mahmud@example.com',
-				'content' => 'চরাঞ্চলের নদীভাঙন রোধে স্থায়ী ড্রেজিং ও বাঁধ নির্মাণ এখন সময়ের দাবি। বিষয়টি গুরুত্ব দিয়ে তুলে ধরার জন্য দৈনিক বাংলাদেশের কথাকে সাধুবাদ জানাই।',
+				'content' => 'চরাঞ্চলের নদীভাঙন রোধে স্থায়ী ড্রেজিং ও বাঁধ নির্মাণ এখন সময়ের দাবি। বিষয়টি গুরুত্ব দিয়ে তুলে ধরার জন্য ' . bdk_get_site_name() . 'কে সাধুবাদ জানাই।',
 			),
 		);
 

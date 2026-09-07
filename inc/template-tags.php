@@ -123,6 +123,17 @@ function bdk_get_primary_category( $post_id = null ) {
 }
 
 /**
+ * Get Default/Fallback Post Thumbnail URL
+ */
+function bdk_get_default_post_thumbnail_url() {
+	$custom_fallback = get_theme_mod( 'bdk_default_post_thumbnail', '' );
+	if ( ! empty( $custom_fallback ) ) {
+		return esc_url( $custom_fallback );
+	}
+	return 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop&q=80';
+}
+
+/**
  * Post Thumbnail with Fallback
  */
 function bdk_post_thumbnail( $size = 'large', $classes = '', $alt = '' ) {
@@ -133,8 +144,8 @@ function bdk_post_thumbnail( $size = 'large', $classes = '', $alt = '' ) {
 			'loading' => 'lazy',
 		) );
 	} else {
-		// Aesthetic fallback news image
-		$fallback_url = 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop&q=80';
+		// Aesthetic fallback news image (customizer configurable)
+		$fallback_url = bdk_get_default_post_thumbnail_url();
 		printf(
 			'<img src="%s" class="%s" alt="%s" loading="lazy">',
 			esc_url( $fallback_url ),
@@ -175,12 +186,53 @@ function bdk_breadcrumbs() {
 }
 
 /**
+ * Dynamic Site Name Helper
+ *
+ * Returns custom site name from theme settings, or defaults to WordPress Site Title.
+ *
+ * @param bool $raw Whether to return unescaped string. Default false.
+ * @return string
+ */
+function bdk_get_site_name( $raw = false ) {
+	$custom_name = get_theme_mod( 'bdk_custom_site_name', '' );
+	if ( ! empty( trim( $custom_name ) ) ) {
+		$name = trim( $custom_name );
+	} else {
+		$name = get_bloginfo( 'name' );
+	}
+	if ( empty( trim( $name ) ) ) {
+		$name = 'দৈনিক বাংলাদেশের কথা';
+	}
+	return $raw ? $name : esc_html( $name );
+}
+
+/**
+ * Extract YouTube Video ID from URL or ID
+ *
+ * @param string $url_or_id
+ * @return string
+ */
+function bdk_extract_youtube_id( $url_or_id ) {
+	if ( empty( $url_or_id ) ) {
+		return '';
+	}
+	$url_or_id = trim( $url_or_id );
+	if ( preg_match( '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url_or_id, $match ) ) {
+		return $match[1];
+	}
+	if ( strlen( $url_or_id ) === 11 && ! preg_match( '/[^a-zA-Z0-9_-]/', $url_or_id ) ) {
+		return $url_or_id;
+	}
+	return $url_or_id;
+}
+
+/**
  * Render Header Brand Logo
  */
 function bdk_header_logo() {
 	$header_logo_url = get_theme_mod( 'bdk_header_logo', '' );
 	$dark_logo_url   = get_theme_mod( 'bdk_dark_mode_logo', '' );
-	$site_name       = get_bloginfo( 'name' );
+	$site_name       = bdk_get_site_name();
 
 	if ( empty( $header_logo_url ) ) {
 		if ( has_custom_logo() ) {
@@ -209,7 +261,7 @@ function bdk_header_logo() {
  */
 function bdk_footer_logo() {
 	$footer_logo_url = get_theme_mod( 'bdk_footer_logo', '' );
-	$site_name       = get_bloginfo( 'name' );
+	$site_name       = bdk_get_site_name();
 
 	if ( empty( $footer_logo_url ) ) {
 		$header_logo_url = get_theme_mod( 'bdk_header_logo', '' );

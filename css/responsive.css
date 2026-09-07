@@ -80,6 +80,14 @@ body {
   .mega-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .bdk-three-col-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bdk-lead-list-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Mobile Devices (max-width: 768px) */
@@ -964,6 +972,14 @@ body {
 
   .search-input-wrap input {
     font-size: var(--fs-md) !important;
+  }
+
+  .bdk-three-col-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .bdk-lead-list-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 

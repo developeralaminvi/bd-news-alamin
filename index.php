@@ -20,7 +20,7 @@ get_header();
         <i class="fas fa-angle-right" style="font-size: 0.75rem;"></i>
         <span>সর্বশেষ সংবাদ</span>
       </div>
-      <h1><?php bloginfo( 'name' ); ?></h1>
+      <h1><?php echo bdk_get_site_name(); ?></h1>
       <p><?php bloginfo( 'description' ); ?></p>
     </div>
   </section>

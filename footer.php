@@ -9,13 +9,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$editor_publisher = get_theme_mod( 'bdk_editor_publisher', 'ছামিউল ইসলাম রিপন' );
-$news_editor      = get_theme_mod( 'bdk_news_editor', 'মো. সিফাত' );
+$editor_publisher_title = trim( (string) get_theme_mod( 'bdk_editor_publisher_title', 'সম্পাদক ও প্রকাশক' ) );
+$editor_publisher       = trim( (string) get_theme_mod( 'bdk_editor_publisher', 'ছামিউল ইসলাম রিপন' ) );
+
+$news_editor_title      = trim( (string) get_theme_mod( 'bdk_news_editor_title', 'বার্তা সম্পাদক' ) );
+$news_editor            = trim( (string) get_theme_mod( 'bdk_news_editor', 'মো. সিফাত' ) );
+
+$editor_email_title     = trim( (string) get_theme_mod( 'bdk_editor_email_title', 'সম্পাদক ইমেইল' ) );
+$editor_email           = trim( (string) get_theme_mod( 'bdk_editor_email', 'siripon455520@gmail.com' ) );
+
+$phone_hotline_title    = trim( (string) get_theme_mod( 'bdk_phone_hotline_title', 'অফিসিয়াল হটলাইন' ) );
+$phone_hotline          = trim( (string) get_theme_mod( 'bdk_phone_hotline', '01680182662' ) );
+
 $office_address   = get_theme_mod( 'bdk_office_address', 'বাসা- উদেরপাড়া (শান্তি নীড়), পোস্ট- ভাটারা, উপজেলা- সরিষাবাড়ী, জেলা- জামালপুর।' );
-$phone_hotline    = get_theme_mod( 'bdk_phone_hotline', '01680182662' );
 $whatsapp_num     = get_theme_mod( 'bdk_whatsapp_number', '01721029727' );
 $official_email   = get_theme_mod( 'bdk_official_email', 'dainikbangladesherkotha@gmail.com' );
-$editor_email     = get_theme_mod( 'bdk_editor_email', 'siripon455520@gmail.com' );
 
 $fb_url = get_theme_mod( 'bdk_social_facebook', 'https://www.facebook.com/dainikbangladesherkotha' );
 $yt_url = get_theme_mod( 'bdk_social_youtube', 'https://youtube.com' );
@@ -36,11 +44,11 @@ $ig_url = get_theme_mod( 'bdk_social_instagram', 'https://instagram.com' );
         
         <!-- Col 1: Logo & Mission Summary -->
         <div class="footer-col footer-col-about">
-          <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="footer-logo" title="<?php bloginfo( 'name' ); ?>">
+          <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="footer-logo" title="<?php echo bdk_get_site_name(); ?>">
             <?php bdk_footer_logo(); ?>
           </a>
           <p>
-            'দৈনিক বাংলাদেশের কথা' সত্য, বস্তুনিষ্ঠ ও নিরপেক্ষ সংবাদ প্রকাশে অঙ্গীকারবদ্ধ একটি আধুনিক অনলাইন গণমাধ্যম। দেশ ও বিদেশের সর্বশেষ খবর সবার আগে পৌঁছে দিতে আমরা নিরন্তর কাজ করছি।
+            '<?php echo bdk_get_site_name(); ?>' সত্য, বস্তুনিষ্ঠ ও নিরপেক্ষ সংবাদ প্রকাশে অঙ্গীকারবদ্ধ একটি আধুনিক অনলাইন গণমাধ্যম। দেশ ও বিদেশের সর্বশেষ খবর সবার আগে পৌঁছে দিতে আমরা নিরন্তর কাজ করছি।
           </p>
           <div class="footer-social-links">
             <?php if ( $fb_url ) : ?><a href="<?php echo esc_url( $fb_url ); ?>" class="social-btn social-fb" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><?php endif; ?>
@@ -121,30 +129,50 @@ $ig_url = get_theme_mod( 'bdk_social_instagram', 'https://instagram.com' );
 
       </div>
 
+      <?php
+      $show_item_1 = ( $editor_publisher_title !== '' && $editor_publisher !== '' );
+      $show_item_2 = ( $news_editor_title !== '' && $news_editor !== '' );
+      $show_item_3 = ( $editor_email_title !== '' && $editor_email !== '' );
+      $show_item_4 = ( $phone_hotline_title !== '' && $phone_hotline !== '' );
+
+      if ( $show_item_1 || $show_item_2 || $show_item_3 || $show_item_4 ) :
+      ?>
       <!-- Footer Editorial & Publisher Panel -->
       <div class="footer-editorial-panel">
+        <?php if ( $show_item_1 ) : ?>
         <div class="editorial-item">
-          <h5>সম্পাদক ও প্রকাশক</h5>
+          <h5><?php echo esc_html( $editor_publisher_title ); ?></h5>
           <p><?php echo esc_html( $editor_publisher ); ?></p>
         </div>
+        <?php endif; ?>
+
+        <?php if ( $show_item_2 ) : ?>
         <div class="editorial-item">
-          <h5>বার্তা সম্পাদক</h5>
+          <h5><?php echo esc_html( $news_editor_title ); ?></h5>
           <p><?php echo esc_html( $news_editor ); ?></p>
         </div>
+        <?php endif; ?>
+
+        <?php if ( $show_item_3 ) : ?>
         <div class="editorial-item">
-          <h5>সম্পাদক ইমেইল</h5>
-          <p><?php echo esc_html( $editor_email ); ?></p>
+          <h5><?php echo esc_html( $editor_email_title ); ?></h5>
+          <p><a href="mailto:<?php echo esc_attr( $editor_email ); ?>" style="color: inherit; text-decoration: none;"><?php echo esc_html( $editor_email ); ?></a></p>
         </div>
+        <?php endif; ?>
+
+        <?php if ( $show_item_4 ) : ?>
         <div class="editorial-item">
-          <h5>অফিসিয়াল হটলাইন</h5>
-          <p><?php echo esc_html( bdk_to_bengali_numerals( $phone_hotline ) ); ?></p>
+          <h5><?php echo esc_html( $phone_hotline_title ); ?></h5>
+          <p><a href="tel:<?php echo esc_attr( $phone_hotline ); ?>" style="color: inherit; text-decoration: none;"><?php echo esc_html( bdk_to_bengali_numerals( $phone_hotline ) ); ?></a></p>
         </div>
+        <?php endif; ?>
       </div>
+      <?php endif; ?>
 
       <!-- Footer Bottom Copyright Bar -->
       <div class="footer-bottom-bar">
         <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-          <p>© <?php echo date( 'Y' ); ?> <?php bloginfo( 'name' ); ?> (<?php echo esc_html( home_url() ); ?>) - সর্বস্বত্ব সংরক্ষিত।</p>
+          <p>© <?php echo date( 'Y' ); ?> <?php echo bdk_get_site_name(); ?> (<?php echo esc_html( home_url() ); ?>) - সর্বস্বত্ব সংরক্ষিত।</p>
           <div class="footer-legal-links">
             <a href="<?php echo esc_url( home_url( '/about' ) ); ?>">আমাদের সম্পর্কে</a>
             <a href="<?php echo esc_url( home_url( '/contact' ) ); ?>">যোগাযোগ</a>

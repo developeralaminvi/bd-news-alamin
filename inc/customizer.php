@@ -9,6 +9,138 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once BDK_THEME_DIR . '/inc/customizer-repeater.php';
+
+/**
+ * Helper to retrieve category term ID by matching slugs
+ */
+function bdk_get_category_id_by_slug( $slugs ) {
+	if ( ! is_array( $slugs ) ) {
+		$slugs = array( $slugs );
+	}
+	foreach ( $slugs as $slug ) {
+		$term = get_category_by_slug( $slug );
+		if ( $term && ! is_wp_error( $term ) ) {
+			return (string) $term->term_id;
+		}
+	}
+	return '0';
+}
+
+/**
+ * Default homepage sections configuration
+ */
+function bdk_get_default_homepage_sections() {
+	return array(
+		array(
+			'category'    => bdk_get_category_id_by_slug( array( 'national', 'politics', 'জাতীয়', 'জাতীয়-ও-রাজনীতি' ) ),
+			'layout'      => 'design_1',
+			'title'       => 'জাতীয় ও রাজনীতি',
+			'btn_text'    => 'আরও দেখুন',
+			'posts_count' => 6,
+			'enabled'     => true,
+		),
+		array(
+			'category'    => bdk_get_category_id_by_slug( array( 'saradesh', 'district', 'সারাদেশ' ) ),
+			'layout'      => 'design_8',
+			'title'       => 'সারাদেশ ও জেলা বার্তা',
+			'btn_text'    => 'সকল জেলা',
+			'posts_count' => 8,
+			'enabled'     => true,
+		),
+		array(
+			'category'    => bdk_get_category_id_by_slug( array( 'entertainment', 'lifestyle', 'বিনোদন' ) ),
+			'layout'      => 'design_2',
+			'title'       => 'বিনোদন ও লাইফস্টাইল',
+			'btn_text'    => 'আরও বিনোদন',
+			'posts_count' => 4,
+			'enabled'     => true,
+		),
+		array(
+			'category'    => bdk_get_category_id_by_slug( array( 'economy', 'business', 'অর্থনীতি' ) ),
+			'layout'      => 'design_3',
+			'title'       => 'অর্থনীতি ও বাণিজ্য মেট্রিক্স',
+			'btn_text'    => 'বাজার বিশ্লেষণ',
+			'posts_count' => 4,
+			'enabled'     => true,
+		),
+		array(
+			'category'    => bdk_get_category_id_by_slug( array( 'sports', 'cricket', 'খেলাধুলা' ) ),
+			'layout'      => 'design_6',
+			'title'       => 'খেলাধুলা ও প্রযুক্তি',
+			'btn_text'    => 'স্কোর ও খবর',
+			'posts_count' => 6,
+			'enabled'     => true,
+		),
+		array(
+			'category'    => bdk_get_category_id_by_slug( array( 'international', 'world', 'আন্তর্জাতিক' ) ),
+			'layout'      => 'design_4',
+			'title'       => 'আন্তর্জাতিক ও বিশ্ব দৃষ্টিভঙ্গি',
+			'btn_text'    => 'বিশ্ব সংবাদ',
+			'posts_count' => 4,
+			'enabled'     => true,
+		),
+	);
+}
+
+/**
+ * Sanitize Repeater Data for Customizer
+ */
+function bdk_sanitize_repeater_data( $input ) {
+	if ( empty( $input ) ) {
+		return wp_json_encode( array() );
+	}
+	if ( is_string( $input ) ) {
+		$decoded = json_decode( wp_unslash( $input ), true );
+	} else {
+		$decoded = (array) $input;
+	}
+	if ( ! is_array( $decoded ) ) {
+		return wp_json_encode( array() );
+	}
+
+	$sanitized       = array();
+	$allowed_layouts = array( 'design_1', 'design_2', 'design_3', 'design_4', 'design_5', 'design_6', 'design_7', 'design_8' );
+
+	foreach ( $decoded as $item ) {
+		if ( ! is_array( $item ) ) {
+			continue;
+		}
+		$cat_id      = isset( $item['category'] ) ? (string) absint( $item['category'] ) : '0';
+		$layout      = isset( $item['layout'] ) && in_array( $item['layout'], $allowed_layouts, true ) ? $item['layout'] : 'design_1';
+		$title       = isset( $item['title'] ) ? sanitize_text_field( $item['title'] ) : '';
+		$btn_text    = isset( $item['btn_text'] ) ? sanitize_text_field( $item['btn_text'] ) : '';
+		$posts_count = isset( $item['posts_count'] ) && ! empty( $item['posts_count'] ) ? max( 1, min( 30, absint( $item['posts_count'] ) ) ) : '';
+		$enabled     = ! isset( $item['enabled'] ) || ! empty( $item['enabled'] );
+
+		$sanitized[] = array(
+			'category'    => $cat_id,
+			'layout'      => $layout,
+			'title'       => $title,
+			'btn_text'    => $btn_text,
+			'posts_count' => $posts_count,
+			'enabled'     => $enabled,
+		);
+	}
+
+	return wp_json_encode( $sanitized );
+}
+
+/**
+ * Get active homepage sections list
+ */
+function bdk_get_homepage_sections() {
+	$raw = get_theme_mod( 'bdk_homepage_sections_data' );
+	if ( empty( $raw ) ) {
+		return bdk_get_default_homepage_sections();
+	}
+	$decoded = json_decode( $raw, true );
+	if ( ! is_array( $decoded ) || empty( $decoded ) ) {
+		return bdk_get_default_homepage_sections();
+	}
+	return $decoded;
+}
+
 function bdk_customize_register( $wp_customize ) {
 
 	// ================= 0. LOGO & BRANDING PANEL =================
@@ -16,6 +148,20 @@ function bdk_customize_register( $wp_customize ) {
 		'title'       => '🖼️ লোগো ও ব্র্যান্ডিং সেটিংস (Logo & Branding)',
 		'priority'    => 15,
 		'description' => 'ওয়েবসাইটের হেডার এবং ফুটারের জন্য লোগো আপলোড ও সাইজ নির্ধারণ করুন।',
+	) );
+
+	// Custom Site Name / Brand Name
+	$wp_customize->add_setting( 'bdk_custom_site_name', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_text_field',
+		'transport'         => 'refresh',
+	) );
+	$wp_customize->add_control( 'bdk_custom_site_name', array(
+		'label'       => 'সাইটের নাম / ব্র্যান্ডিং নাম (Site Name / Branding)',
+		'description' => 'এখানে যেকোনো নাম দিতে পারেন। খালি রাখলে WordPress জেনারেল সেটিংসের সাইট টাইটেল (Site Title) স্বয়ংক্রিয়ভাবে ডিফল্ট হিসেবে ব্যবহৃত হবে।',
+		'section'     => 'bdk_logo_section',
+		'type'        => 'text',
+		'priority'    => 5,
 	) );
 
 	// Header Main Logo
@@ -108,6 +254,19 @@ function bdk_customize_register( $wp_customize ) {
 		'type'        => 'number',
 		'input_attrs' => array( 'min' => 20, 'max' => 150, 'step' => 2 ),
 	) );
+
+	// Default Post Thumbnail / Fallback Image
+	$wp_customize->add_setting( 'bdk_default_post_thumbnail', array(
+		'default'           => '',
+		'sanitize_callback' => 'esc_url_raw',
+		'transport'         => 'refresh',
+	) );
+	$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'bdk_default_post_thumbnail', array(
+		'label'       => 'ডিফল্ট পোস্ট ছবি / ব্যাকআপ থাম্বনেইল (Default Post Thumbnail)',
+		'description' => 'কোনো পোস্টে ফিচার্ড ইমেজ না থাকলে ব্যাকআপ বা ফলব্যাক হিসেবে এই ছবিটি প্রদর্শিত হবে। খালি রাখলে স্ট্যান্ডার্ড ছবি শো করবে।',
+		'section'     => 'bdk_logo_section',
+		'settings'    => 'bdk_default_post_thumbnail',
+	) ) );
 
 	// ================= 1. BRAND COLORS PANEL =================
 	$wp_customize->add_section( 'bdk_colors_section', array(
@@ -208,8 +367,21 @@ function bdk_customize_register( $wp_customize ) {
 
 	// ================= 3. ORGANIZATION & EDITORIAL INFO =================
 	$wp_customize->add_section( 'bdk_org_info_section', array(
-		'title'    => '🏢 সম্পাদকীয় ও যোগাযোগ তথ্য (Org Info)',
-		'priority' => 25,
+		'title'       => '🏢 সম্পাদকীয় ও যোগাযোগ তথ্য (Org Info)',
+		'priority'    => 25,
+		'description' => 'ফুটারের সম্পাদকীয় প্যানেল ও যোগাযোগ তথ্য। যেকোনো পদবী বা নাম খালি রাখলে ফুটারে সংশ্লিষ্ট আইটেমটি প্রদর্শিত হবে না।',
+	) );
+
+	// 1. Editor & Publisher Title & Name
+	$wp_customize->add_setting( 'bdk_editor_publisher_title', array(
+		'default'           => 'সম্পাদক ও প্রকাশক',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'bdk_editor_publisher_title', array(
+		'label'       => 'পদবী / হেডিং ১ (ডিফল্ট: সম্পাদক ও প্রকাশক)',
+		'description' => 'খালি রাখলে ফুটারে এই বক্সটি প্রদর্শিত হবে না।',
+		'section'     => 'bdk_org_info_section',
+		'type'        => 'text',
 	) );
 
 	$wp_customize->add_setting( 'bdk_editor_publisher', array(
@@ -217,9 +389,22 @@ function bdk_customize_register( $wp_customize ) {
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'bdk_editor_publisher', array(
-		'label'   => 'সম্পাদক ও প্রকাশক',
-		'section' => 'bdk_org_info_section',
-		'type'    => 'text',
+		'label'       => 'ব্যক্তির নাম ১ (সম্পাদক ও প্রকাশক)',
+		'description' => 'খালি রাখলে ফুটারে এই বক্সটি প্রদর্শিত হবে না।',
+		'section'     => 'bdk_org_info_section',
+		'type'        => 'text',
+	) );
+
+	// 2. News Editor Title & Name
+	$wp_customize->add_setting( 'bdk_news_editor_title', array(
+		'default'           => 'বার্তা সম্পাদক',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'bdk_news_editor_title', array(
+		'label'       => 'পদবী / হেডিং ২ (ডিফল্ট: বার্তা সম্পাদক)',
+		'description' => 'খালি রাখলে ফুটারে এই বক্সটি প্রদর্শিত হবে না।',
+		'section'     => 'bdk_org_info_section',
+		'type'        => 'text',
 	) );
 
 	$wp_customize->add_setting( 'bdk_news_editor', array(
@@ -227,11 +412,59 @@ function bdk_customize_register( $wp_customize ) {
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'bdk_news_editor', array(
-		'label'   => 'বার্তা সম্পাদক',
-		'section' => 'bdk_org_info_section',
-		'type'    => 'text',
+		'label'       => 'ব্যক্তির নাম ২ (বার্তা সম্পাদক)',
+		'description' => 'খালি রাখলে ফুটারে এই বক্সটি প্রদর্শিত হবে না।',
+		'section'     => 'bdk_org_info_section',
+		'type'        => 'text',
 	) );
 
+	// 3. Editor Email Title & Address
+	$wp_customize->add_setting( 'bdk_editor_email_title', array(
+		'default'           => 'সম্পাদক ইমেইল',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'bdk_editor_email_title', array(
+		'label'       => 'পদবী / হেডিং ৩ (ডিফল্ট: সম্পাদক ইমেইল)',
+		'description' => 'খালি রাখলে ফুটারে এই বক্সটি প্রদর্শিত হবে না।',
+		'section'     => 'bdk_org_info_section',
+		'type'        => 'text',
+	) );
+
+	$wp_customize->add_setting( 'bdk_editor_email', array(
+		'default'           => 'siripon455520@gmail.com',
+		'sanitize_callback' => 'sanitize_email',
+	) );
+	$wp_customize->add_control( 'bdk_editor_email', array(
+		'label'       => 'সম্পাদকের ইমেইল ঠিকানা',
+		'description' => 'খালি রাখলে ফুটারে এই বক্সটি প্রদর্শিত হবে না।',
+		'section'     => 'bdk_org_info_section',
+		'type'        => 'email',
+	) );
+
+	// 4. Hotline Title & Number
+	$wp_customize->add_setting( 'bdk_phone_hotline_title', array(
+		'default'           => 'অফিসিয়াল হটলাইন',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'bdk_phone_hotline_title', array(
+		'label'       => 'পদবী / হেডিং ৪ (ডিফল্ট: অফিসিয়াল হটলাইন)',
+		'description' => 'খালি রাখলে ফুটারে এই বক্সটি প্রদর্শিত হবে না।',
+		'section'     => 'bdk_org_info_section',
+		'type'        => 'text',
+	) );
+
+	$wp_customize->add_setting( 'bdk_phone_hotline', array(
+		'default'           => '01680182662',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'bdk_phone_hotline', array(
+		'label'       => 'হটলাইন / ফোন নম্বর',
+		'description' => 'খালি রাখলে ফুটারে এই বক্সটি প্রদর্শিত হবে না।',
+		'section'     => 'bdk_org_info_section',
+		'type'        => 'text',
+	) );
+
+	// General Office Address & Contacts
 	$wp_customize->add_setting( 'bdk_office_address', array(
 		'default'           => 'বাসা_ উদেরপাড়া (শান্তি নীড়), পোস্ট - ভাটারা, উপজেলা- সরিষাবাড়ী, জেলা- জামালপুর।',
 		'sanitize_callback' => 'sanitize_textarea_field',
@@ -240,16 +473,6 @@ function bdk_customize_register( $wp_customize ) {
 		'label'   => 'অফিস ঠিকানা',
 		'section' => 'bdk_org_info_section',
 		'type'    => 'textarea',
-	) );
-
-	$wp_customize->add_setting( 'bdk_phone_hotline', array(
-		'default'           => '01680182662',
-		'sanitize_callback' => 'sanitize_text_field',
-	) );
-	$wp_customize->add_control( 'bdk_phone_hotline', array(
-		'label'   => 'হটলাইন / ফোন নম্বর',
-		'section' => 'bdk_org_info_section',
-		'type'    => 'text',
 	) );
 
 	$wp_customize->add_setting( 'bdk_whatsapp_number', array(
@@ -267,17 +490,7 @@ function bdk_customize_register( $wp_customize ) {
 		'sanitize_callback' => 'sanitize_email',
 	) );
 	$wp_customize->add_control( 'bdk_official_email', array(
-		'label'   => 'অফিসিয়াল ইমেইল',
-		'section' => 'bdk_org_info_section',
-		'type'    => 'email',
-	) );
-
-	$wp_customize->add_setting( 'bdk_editor_email', array(
-		'default'           => 'siripon455520@gmail.com',
-		'sanitize_callback' => 'sanitize_email',
-	) );
-	$wp_customize->add_control( 'bdk_editor_email', array(
-		'label'   => 'সম্পাদকের ইমেইল',
+		'label'   => 'অফিসিয়াল সাধারণ ইমেইল',
 		'section' => 'bdk_org_info_section',
 		'type'    => 'email',
 	) );
@@ -414,59 +627,98 @@ function bdk_customize_register( $wp_customize ) {
 		'type'        => 'text',
 	) );
 
-	// ================= 6. HOMEPAGE SECTIONS & CATEGORY SELECTOR =================
+	// ================= 6. HOMEPAGE SECTIONS REPEATER & LAYOUT SETTINGS =================
 	$wp_customize->add_section( 'bdk_homepage_sections', array(
 		'title'       => '🏠 হোমপেজ সেকশন ও ক্যাটাগরি সেটিংস',
 		'priority'    => 40,
-		'description' => 'হোম পেজের প্রতিটি সেকশনের ক্যাটাগরি নিজের পছন্দমতো নির্ধারণ করুন।',
+		'description' => 'হোমপেজে আপনার ইচ্ছেমতো নতুন সেকশন যোগ করুন, প্রতিটি সেকশনে পছন্দের ডিজাইন লেআউট (ডিজাইন ১, ২, ৩...) এবং ক্যাটাগরি নির্ধারণ করুন।',
 	) );
 
-	// Categories helper for dropdowns
-	$categories_array = array( '0' => '— সাম্প্রতিক সকল পোস্ট (Latest) —' );
-	$categories       = get_categories( array( 'hide_empty' => false ) );
-	if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) {
-		foreach ( $categories as $cat ) {
-			$categories_array[ $cat->term_id ] = $cat->name;
-		}
-	}
+	// Homepage Sections Repeater Setting
+	$wp_customize->add_setting( 'bdk_homepage_sections_data', array(
+		'default'           => wp_json_encode( bdk_get_default_homepage_sections() ),
+		'sanitize_callback' => 'bdk_sanitize_repeater_data',
+		'transport'         => 'refresh',
+	) );
 
-	$sections_config = array(
-		'hero_national'   => '১. জাতীয় ও প্রধান সংবাদ (National & Hero)',
-		'saradesh'        => '২. সারা দেশ / জেলা সংবাদ (Saradesh)',
-		'entertainment'   => '৩. বিনোদন ও জীবনযাপন (Entertainment & Lifestyle)',
-		'economy'         => '৪. অর্থনীতি ও বাণিজ্য মেট্রিক্স (Economy Matrix)',
-		'sports'          => '৫. খেলাধুলা ও ক্রিকেট (Sports)',
-		'technology'      => '৬. বিজ্ঞান ও প্রযুক্তি (Technology)',
-		'international'   => '৭. আন্তর্জাতিক ও বিশ্ব ম্যাগাজিন (World News)',
-		'investigative'   => '৮. বিশেষ অনুসন্ধান সিরিজ (Investigative Spotlight)',
-		'opinion'         => '৯. মতামত ও সম্পাদকীয় (Opinion)',
-		'photo'           => '১০. ছবির গল্প ও ফটো অ্যালবাম (Photo Gallery)',
-	);
+	// Repeater Control
+	$wp_customize->add_control( new BDK_Customizer_Repeater_Control(
+		$wp_customize,
+		'bdk_homepage_sections_data',
+		array(
+			'label'       => 'হোমপেজ সেকশন তালিকা ও লেআউট কন্ট্রোল',
+			'description' => 'নিচের রিপিটার থেকে সেকশন যোগ, মুছে ফেলা, ক্যাটাগরি ও লেআউট ডিজাইন পছন্দমতো সাজিয়ে নিন।',
+			'section'     => 'bdk_homepage_sections',
+			'settings'    => 'bdk_homepage_sections_data',
+			'priority'    => 10,
+		)
+	) );
 
-	foreach ( $sections_config as $key => $title ) {
-		// Category selection setting
-		$wp_customize->add_setting( "bdk_cat_{$key}", array(
-			'default'           => '0',
-			'sanitize_callback' => 'absint',
-		) );
-		$wp_customize->add_control( "bdk_cat_{$key}", array(
-			'label'   => $title . ' - ক্যাটাগরি নির্বাচন করুন',
-			'section' => 'bdk_homepage_sections',
-			'type'    => 'select',
-			'choices' => $categories_array,
-		) );
+	// Mid-Content Banner Ad Toggle
+	$wp_customize->add_setting( 'bdk_show_mid_ad', array(
+		'default'           => true,
+		'sanitize_callback' => 'wp_validate_boolean',
+		'transport'         => 'refresh',
+	) );
+	$wp_customize->add_control( 'bdk_show_mid_ad', array(
+		'label'       => 'হোমপেজ মিড-কনটেন্ট ব্যানার বিজ্ঞাপন দেখাবেন?',
+		'description' => 'দ্বিতীয় সেকশনের পর মাঝখানের ব্যানার অ্যাড স্লট প্রদর্শন করবে।',
+		'section'     => 'bdk_homepage_sections',
+		'type'        => 'checkbox',
+		'priority'    => 20,
+	) );
 
-		// Section visibility setting
-		$wp_customize->add_setting( "bdk_show_{$key}", array(
-			'default'           => true,
-			'sanitize_callback' => 'wp_validate_boolean',
-		) );
-		$wp_customize->add_control( "bdk_show_{$key}", array(
-			'label'   => 'এই সেকশনটি হোম পেজে দেখাবেন?',
-			'section' => 'bdk_homepage_sections',
-			'type'    => 'checkbox',
-		) );
-	}
+	// Video Section Toggle
+	$wp_customize->add_setting( 'bdk_show_video_section', array(
+		'default'           => true,
+		'sanitize_callback' => 'wp_validate_boolean',
+		'transport'         => 'refresh',
+	) );
+	$wp_customize->add_control( 'bdk_show_video_section', array(
+		'label'       => 'ভিডিও বুলেটিন ও টকশো সেকশন দেখাবেন?',
+		'section'     => 'bdk_homepage_sections',
+		'type'        => 'checkbox',
+		'priority'    => 25,
+	) );
+
+	// Investigative Spotlight Toggle
+	$wp_customize->add_setting( 'bdk_show_investigative_section', array(
+		'default'           => true,
+		'sanitize_callback' => 'wp_validate_boolean',
+		'transport'         => 'refresh',
+	) );
+	$wp_customize->add_control( 'bdk_show_investigative_section', array(
+		'label'       => 'বিশেষ অনুসন্ধান ও ফিচার সিরিজ সেকশন দেখাবেন?',
+		'section'     => 'bdk_homepage_sections',
+		'type'        => 'checkbox',
+		'priority'    => 30,
+	) );
+
+	// Opinion Section Toggle
+	$wp_customize->add_setting( 'bdk_show_opinion_section', array(
+		'default'           => true,
+		'sanitize_callback' => 'wp_validate_boolean',
+		'transport'         => 'refresh',
+	) );
+	$wp_customize->add_control( 'bdk_show_opinion_section', array(
+		'label'       => 'মতামত ও সম্পাদকীয় সেকশন দেখাবেন?',
+		'section'     => 'bdk_homepage_sections',
+		'type'        => 'checkbox',
+		'priority'    => 35,
+	) );
+
+	// Photo Gallery Section Toggle
+	$wp_customize->add_setting( 'bdk_show_photo_section', array(
+		'default'           => true,
+		'sanitize_callback' => 'wp_validate_boolean',
+		'transport'         => 'refresh',
+	) );
+	$wp_customize->add_control( 'bdk_show_photo_section', array(
+		'label'       => 'ছবির গল্প ও ফটো অ্যালবাম সেকশন দেখাবেন?',
+		'section'     => 'bdk_homepage_sections',
+		'type'        => 'checkbox',
+		'priority'    => 40,
+	) );
 }
 add_action( 'customize_register', 'bdk_customize_register' );
 

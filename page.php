@@ -23,7 +23,7 @@ while ( have_posts() ) : the_post();
         <span><?php the_title(); ?></span>
       </div>
       <h1><?php the_title(); ?></h1>
-      <p><?php echo has_excerpt() ? get_the_excerpt() : 'দৈনিক বাংলাদেশের কথা - সত্য ও ন্যায়ের পথে নিরন্তর'; ?></p>
+      <p><?php echo has_excerpt() ? get_the_excerpt() : bdk_get_site_name() . ' - সত্য ও ন্যায়ের পথে নিরন্তর'; ?></p>
     </div>
   </section>
 

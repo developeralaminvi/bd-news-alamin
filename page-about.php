@@ -29,7 +29,7 @@ $editor_email     = get_theme_mod( 'bdk_editor_email', 'siripon455520@gmail.com'
         <span>আমাদের সম্পর্কে</span>
       </div>
       <h1>আমাদের সম্পর্কে (About Us)</h1>
-      <p>'দৈনিক বাংলাদেশের কথা' - সত্য, বস্তুনিষ্ঠ ও নিরপেক্ষ সাংবাদিকতায় অঙ্গীকারবদ্ধ জাতীয় গণমাধ্যম</p>
+      <p>'<?php echo bdk_get_site_name(); ?>' - সত্য, বস্তুনিষ্ঠ ও নিরপেক্ষ সাংবাদিকতায় অঙ্গীকারবদ্ধ জাতীয় গণমাধ্যম</p>
     </div>
   </section>
 
@@ -41,7 +41,7 @@ $editor_email     = get_theme_mod( 'bdk_editor_email', 'siripon455520@gmail.com'
         <div class="static-content-box" style="background: var(--surface-color); padding: 2rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); line-height: 1.8;">
           <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.75rem;">আমাদের লক্ষ্য ও উদ্দেশ্য</h2>
           <p>
-            'দৈনিক বাংলাদেশের কথা' একটি স্বাধীন, নির্ভীক ও উন্নয়নমুখী জাতীয় অনলাইন গণমাধ্যম। আমাদের মূল অঙ্গীকার হলো গ্রামীণ তৃণমূলের মানুষের সুখ-দুঃখ, সমস্যা, সম্ভাবনা এবং সাফল্যকে জাতীয় ও আন্তর্জাতিক পরিমণ্ডলে তুলে ধরা। আমরা কোনো দলীয় বা ব্যক্তিস্বার্থের পক্ষপাতিত্ব না করে সত্যকে সাহসের সাথে প্রকাশ করতে প্রতিশ্রুতিবদ্ধ।
+            '<?php echo bdk_get_site_name(); ?>' একটি স্বাধীন, নির্ভীক ও উন্নয়নমুখী জাতীয় অনলাইন গণমাধ্যম। আমাদের মূল অঙ্গীকার হলো গ্রামীণ তৃণমূলের মানুষের সুখ-দুঃখ, সমস্যা, সম্ভাবনা এবং সাফল্যকে জাতীয় ও আন্তর্জাতিক পরিমণ্ডলে তুলে ধরা। আমরা কোনো দলীয় বা ব্যক্তিস্বার্থের পক্ষপাতিত্ব না করে সত্যকে সাহসের সাথে প্রকাশ করতে প্রতিশ্রুতিবদ্ধ।
           </p>
 
           <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--primary-color); margin: 1.5rem 0 0.75rem;">আমাদের সম্পাদকীয় নীতি</h2>

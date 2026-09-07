@@ -15,7 +15,7 @@ while ( have_posts() ) : the_post();
 	// Track post views
 	bdk_set_post_views( get_the_ID() );
 	$primary_cat = get_the_category()[0] ?? null;
-	$post_thumb_url = get_the_post_thumbnail_url( get_the_ID(), 'full' ) ?: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=1000&auto=format&fit=crop&q=80';
+	$post_thumb_url = get_the_post_thumbnail_url( get_the_ID(), 'full' ) ?: bdk_get_default_post_thumbnail_url();
 ?>
 
   <!-- Single Post Main Layout -->
@@ -77,17 +77,39 @@ while ( have_posts() ) : the_post();
           </div>
         </div>
 
-        <!-- 4. Featured Image -->
-        <figure class="article-featured-image" style="margin: 1.5rem 0;">
-          <?php if ( has_post_thumbnail() ) : ?>
-            <?php the_post_thumbnail( 'full', array( 'class' => 'featured-main-img', 'style' => 'width: 100%; border-radius: var(--radius-md); max-height: 480px; object-fit: cover;' ) ); ?>
-          <?php else : ?>
-            <img src="https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=1000&auto=format&fit=crop&q=80" alt="<?php the_title_attribute(); ?>" style="width: 100%; border-radius: var(--radius-md); max-height: 480px; object-fit: cover;">
-          <?php endif; ?>
-          <figcaption class="article-image-caption" style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.5rem; border-left: 3px solid var(--primary-color); padding-left: 0.5rem;">
-            ছবি: <?php echo get_the_post_thumbnail_caption() ?: get_the_title() . ' | দৈনিক বাংলাদেশের কথা'; ?>
-          </figcaption>
-        </figure>
+        <!-- 4. Featured Media (Video Player if Video post, else Featured Image) -->
+        <?php
+        $yt_raw   = get_post_meta( get_the_ID(), '_bdk_youtube_url', true );
+        $mp4_url  = get_post_meta( get_the_ID(), '_bdk_custom_video_file', true );
+        $is_video = ( get_post_type() === 'bdk_video' ) || ! empty( $yt_raw ) || ! empty( $mp4_url );
+
+        if ( $is_video && ( ! empty( $mp4_url ) || ! empty( $yt_raw ) ) ) :
+          $yt_id = bdk_extract_youtube_id( $yt_raw );
+        ?>
+          <div class="article-featured-video" style="margin: 1.5rem 0; border-radius: var(--radius-md); overflow: hidden; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.25);">
+            <?php if ( ! empty( $mp4_url ) ) : ?>
+              <video controls autoplay playsinline preload="metadata" poster="<?php echo esc_url( get_the_post_thumbnail_url( get_the_ID(), 'full' ) ); ?>" style="width: 100%; aspect-ratio: 16/9; display: block; max-height: 520px; object-fit: contain; background: #000;">
+                <source src="<?php echo esc_url( $mp4_url ); ?>" type="video/mp4">
+                আপনার ব্রাউজার ভিডিও প্লে করতে সমর্থন করছে না।
+              </video>
+            <?php elseif ( ! empty( $yt_id ) ) : ?>
+              <div style="position: relative; width: 100%; aspect-ratio: 16/9;">
+                <iframe src="https://www.youtube-nocookie.com/embed/<?php echo esc_attr( $yt_id ); ?>?autoplay=1&rel=0&modestbranding=1" title="<?php the_title_attribute(); ?>" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+              </div>
+            <?php endif; ?>
+          </div>
+        <?php else : ?>
+          <figure class="article-featured-image" style="margin: 1.5rem 0;">
+            <?php if ( has_post_thumbnail() ) : ?>
+              <?php the_post_thumbnail( 'full', array( 'class' => 'featured-main-img', 'style' => 'width: 100%; border-radius: var(--radius-md); max-height: 480px; object-fit: cover;' ) ); ?>
+            <?php else : ?>
+              <img src="<?php echo esc_url( bdk_get_default_post_thumbnail_url() ); ?>" alt="<?php the_title_attribute(); ?>" style="width: 100%; border-radius: var(--radius-md); max-height: 480px; object-fit: cover;">
+            <?php endif; ?>
+            <figcaption class="article-image-caption" style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.5rem; border-left: 3px solid var(--primary-color); padding-left: 0.5rem;">
+              ছবি: <?php echo get_the_post_thumbnail_caption() ?: get_the_title() . ' | ' . bdk_get_site_name(); ?>
+            </figcaption>
+          </figure>
+        <?php endif; ?>
 
         <!-- Top In-Article Banner Ad Slot -->
         <?php bdk_display_ad_slot( 'bdk_single_top_ad', 'শীর্ষ ব্যানার বিজ্ঞাপন', '৪১২×৯০ Leaderboard' ); ?>

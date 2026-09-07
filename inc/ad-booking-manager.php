@@ -1125,14 +1125,14 @@ function bdk_submit_ad_booking_ajax() {
 
 	// Emails
 	$admin_email   = get_option( 'admin_email' );
-	$site_name     = get_bloginfo( 'name' );
+	$site_name     = bdk_get_site_name();
 	$admin_subject = '[বিজ্ঞাপন বুকিং] নতুন আবেদন: ' . $applicant_name;
 	$admin_body    = "<h2>📢 নতুন বিজ্ঞাপন বুকিং আবেদন</h2><p><strong>আবেদনকারী:</strong> {$applicant_name} ({$company_name})</p><p><strong>ফোন:</strong> {$phone}</p><p><strong>প্যাকেজ:</strong> {$package_name} ({$duration})</p>";
 
 	$headers = array( 'Content-Type: text/html; charset=UTF-8' );
 	wp_mail( $admin_email, $admin_subject, $admin_body, $headers );
 
-	$user_subject = "দৈনিক বাংলাদেশের কথা - বিজ্ঞাপন বুকিং আবেদন প্রাপ্তি";
+	$user_subject = $site_name . " - বিজ্ঞাপন বুকিং আবেদন প্রাপ্তি";
 	$user_body    = "<p>সম্মানিত {$applicant_name}, আপনার বিজ্ঞাপন বুকিং আবেদনটি সফলভাবে গৃহীত হয়েছে। আমাদের এডভারটাইজিং টিম খুব শীঘ্রই আপনার সাথে যোগাযোগ করবে।</p>";
 	wp_mail( $email, $user_subject, $user_body, $headers );
 
@@ -1153,7 +1153,7 @@ function bdk_advertising_page_auto_setup() {
 			$page_id = wp_insert_post( array(
 				'post_title'   => 'বিজ্ঞাপন ও মূল্য তালিকা',
 				'post_name'    => 'advertising',
-				'post_content' => 'দৈনিক বাংলাদেশের কথা পোর্টালে বিজ্ঞাপনের স্থান, সাইজ, রেট ও অনলাইন বুকিং।',
+				'post_content' => bdk_get_site_name() . ' পোর্টালে বিজ্ঞাপনের স্থান, সাইজ, রেট ও অনলাইন বুকিং।',
 				'post_status'  => 'publish',
 				'post_type'    => 'page',
 			) );
