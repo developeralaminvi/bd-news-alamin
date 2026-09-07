@@ -137,30 +137,45 @@ $packages = bdk_get_ad_packages();
 				<!-- Terms & Specs -->
 				<div style="background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem;">
 					<h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
-						<i class="fas fa-list-check" style="color: var(--primary-color);"></i> বিজ্ঞাপনের শর্তাবলী ও বিন্যাস:
+						<i class="fas fa-list-check" style="color: var(--primary-color);"></i> <?php echo esc_html( bdk_get_ad_page_terms_title() ); ?>
 					</h3>
 					<ul style="list-style: disc; margin-left: 1.25rem; font-size: 0.88rem; color: var(--text-body); line-height: 1.8;">
-						<li><strong>ফরম্যাট:</strong> JPG, PNG, Static GIF অথবা Animated Banner গ্রহণযোগ্য।</li>
-						<li><strong>সর্বোচ্চ ফাইল সাইজ:</strong> ব্যানার ফাইলের সাইজ ১৫০ KB এর মধ্যে হতে হবে।</li>
-						<li><strong>ব্যানার ডিজাইন:</strong> প্রয়োজনে আমাদের অভিজ্ঞ গ্রাফিক ডিজাইনার দিয়ে আকর্ষণীয় ব্যানার তৈরি সুবিধা রয়েছে।</li>
-						<li><strong>বিজ্ঞাপন অনুমোদন:</strong> জাতীয় নীতিমালার পরিপন্থী, অবাস্তব বা বিভ্রান্তিকর কোনো বিজ্ঞাপন প্রকাশ করা হয় না।</li>
+						<?php echo wp_kses_post( bdk_get_ad_page_terms_content() ); ?>
 					</ul>
 				</div>
 
 				<!-- Payment Methods & Direct Contact -->
 				<div style="background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem;">
 					<h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
-						<i class="fas fa-wallet" style="color: var(--primary-color);"></i> পেমেন্ট মাধ্যম ও সরাসরি যোগাযোগ:
+						<i class="fas fa-wallet" style="color: var(--primary-color);"></i> <?php echo esc_html( bdk_get_ad_page_payment_title() ); ?>
 					</h3>
-					<p style="font-size: 0.88rem; color: var(--text-body); line-height: 1.6; margin-bottom: 1rem;">
-						বুকিং কনফার্ম হওয়ার পর বিকাশ, নগদ, রকেট অথবা সরাসরি ব্যাংক ট্রান্সফারের মাধ্যমে পেমেন্ট সম্পন্ন করতে পারবেন।
-					</p>
+					<?php 
+					$ad_payment_desc = bdk_get_ad_page_payment_desc();
+					if ( ! empty( $ad_payment_desc ) ) : 
+					?>
+						<p style="font-size: 0.88rem; color: var(--text-body); line-height: 1.6; margin-bottom: 1rem;">
+							<?php echo nl2br( esc_html( $ad_payment_desc ) ); ?>
+						</p>
+					<?php endif; ?>
 					
-					<div style="background: var(--surface-secondary); padding: 1rem; border-radius: 8px; font-size: 0.88rem;">
-						<p style="margin: 0 0 6px; font-weight: 700; color: var(--text-main);">📞 জরুরি যোগাযোগ (বিজ্ঞাপন বিভাগ):</p>
-						<p style="margin: 0 0 4px; color: var(--primary-color); font-weight: 700;"><i class="fas fa-phone"></i> +৮৮০ ১৭০০-০০০০০০ / ০১৮০০-০০০০০০</p>
-						<p style="margin: 0; color: var(--text-muted);"><i class="fas fa-envelope"></i> ads@dainikbangladesherkotha.com</p>
-					</div>
+					<?php 
+					$ad_contact_title = bdk_get_ad_page_contact_title();
+					$ad_contact_phone = bdk_get_ad_page_phone();
+					$ad_contact_email = bdk_get_ad_page_email();
+					if ( ! empty( $ad_contact_title ) || ! empty( $ad_contact_phone ) || ! empty( $ad_contact_email ) ) :
+					?>
+						<div style="background: var(--surface-secondary); padding: 1rem; border-radius: 8px; font-size: 0.88rem;">
+							<?php if ( ! empty( $ad_contact_title ) ) : ?>
+								<p style="margin: 0 0 6px; font-weight: 700; color: var(--text-main);"><?php echo esc_html( $ad_contact_title ); ?></p>
+							<?php endif; ?>
+							<?php if ( ! empty( $ad_contact_phone ) ) : ?>
+								<p style="margin: 0 0 4px; color: var(--primary-color); font-weight: 700;"><i class="fas fa-phone"></i> <?php echo esc_html( $ad_contact_phone ); ?></p>
+							<?php endif; ?>
+							<?php if ( ! empty( $ad_contact_email ) ) : ?>
+								<p style="margin: 0; color: var(--text-muted);"><i class="fas fa-envelope"></i> <a href="mailto:<?php echo esc_attr( $ad_contact_email ); ?>" style="color: inherit; text-decoration: none;"><?php echo esc_html( $ad_contact_email ); ?></a></p>
+							<?php endif; ?>
+						</div>
+					<?php endif; ?>
 				</div>
 
 			</div>

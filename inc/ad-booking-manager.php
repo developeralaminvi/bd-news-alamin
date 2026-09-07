@@ -301,6 +301,19 @@ function bdk_render_ad_manager_page() {
 		}
 	}
 
+	// Handle Save Contact & Guidelines Settings
+	if ( isset( $_POST['action'] ) && 'save_ad_contact_settings' === $_POST['action'] && check_admin_referer( 'bdk_save_ad_contact_nonce' ) ) {
+		set_theme_mod( 'bdk_ad_page_contact_title', sanitize_text_field( $_POST['bdk_ad_page_contact_title'] ?? '' ) );
+		set_theme_mod( 'bdk_ad_page_phone', sanitize_text_field( $_POST['bdk_ad_page_phone'] ?? '' ) );
+		set_theme_mod( 'bdk_ad_page_email', sanitize_email( $_POST['bdk_ad_page_email'] ?? '' ) );
+		set_theme_mod( 'bdk_ad_page_payment_title', sanitize_text_field( $_POST['bdk_ad_page_payment_title'] ?? '' ) );
+		set_theme_mod( 'bdk_ad_page_payment_desc', sanitize_textarea_field( $_POST['bdk_ad_page_payment_desc'] ?? '' ) );
+		set_theme_mod( 'bdk_ad_page_terms_title', sanitize_text_field( $_POST['bdk_ad_page_terms_title'] ?? '' ) );
+		set_theme_mod( 'bdk_ad_page_terms_content', wp_kses_post( $_POST['bdk_ad_page_terms_content'] ?? '' ) );
+
+		echo '<div class="notice notice-success is-dismissible"><p>বিজ্ঞাপন পেজের যোগাযোগ, পেমেন্ট ও শর্তাবলী সেটিংস সফলভাবে সংরক্ষণ করা হয়েছে!</p></div>';
+	}
+
 	$bookings = get_option( 'bdk_ad_bookings_list', array() );
 	$packages = bdk_get_ad_packages();
 	$ad_slots = bdk_get_theme_ad_slots();
@@ -365,6 +378,10 @@ function bdk_render_ad_manager_page() {
 
 				<a href="?page=bdk-ad-manager&tab=packages" style="<?php echo 'packages' === $active_tab ? 'background: #ffffff; color: #047857; box-shadow: 0 4px 14px rgba(0,0,0,0.15); font-weight: 800;' : 'background: rgba(255,255,255,0.12); color: #ffffff; border: 1px solid rgba(255,255,255,0.2); font-weight: 600;'; ?> padding: 9px 18px; border-radius: 10px; text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease;">
 					⚙️ বুকিং প্যাকেজ রেট
+				</a>
+
+				<a href="?page=bdk-ad-manager&tab=contact_settings" style="<?php echo 'contact_settings' === $active_tab ? 'background: #ffffff; color: #047857; box-shadow: 0 4px 14px rgba(0,0,0,0.15); font-weight: 800;' : 'background: rgba(255,255,255,0.12); color: #ffffff; border: 1px solid rgba(255,255,255,0.2); font-weight: 600;'; ?> padding: 9px 18px; border-radius: 10px; text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease;">
+					📞 যোগাযোগ ও শর্তাবলী সেটিংস
 				</a>
 			</div>
 		</div>
@@ -770,6 +787,85 @@ function bdk_render_ad_manager_page() {
 					</tbody>
 				</table>
 
+		<?php elseif ( 'contact_settings' === $active_tab ) : ?>
+			<!-- TAB 5: AD CONTACT & GUIDELINES SETTINGS -->
+			<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+				<form method="post">
+					<?php wp_nonce_field( 'bdk_save_ad_contact_nonce' ); ?>
+					<input type="hidden" name="action" value="save_ad_contact_settings">
+
+					<h3 style="margin-top: 0; color: #0f172a; font-size: 18px; font-weight: 800; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+						<span>📞</span> বিজ্ঞাপন পেজের জরুরি যোগাযোগ, পেমেন্ট ও শর্তাবলী সেটিংস:
+					</h3>
+					<p style="color: #64748b; font-size: 13px; margin-bottom: 20px;">
+						এখানে দেওয়া তথ্যসমূহ ফ্রন্টএন্ড বিজ্ঞাপন পেজে (<code>/advertising</code>) প্রদর্শিত হবে। আপনি চাইলে <a href="<?php echo esc_url( admin_url( 'customize.php' ) ); ?>" target="_blank" style="color: #047857; font-weight: 700;">কাস্টমাইজার (Appearance &gt; Customize)</a> থেকেও এগুলো পরিবর্তন করতে পারেন।
+					</p>
+
+					<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+						
+						<!-- Left Column: Direct Contact & Payment -->
+						<div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px;">
+							<h4 style="margin: 0 0 16px; color: #006a4e; font-size: 15px; font-weight: 700; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+								📱 সরাসরি জরুরি যোগাযোগ ও পেমেন্ট
+							</h4>
+
+							<div style="display: flex; flex-direction: column; gap: 14px;">
+								<div>
+									<label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 5px;">যোগাযোগ সেকশন শিরোনাম:</label>
+									<input type="text" name="bdk_ad_page_contact_title" value="<?php echo esc_attr( bdk_get_ad_page_contact_title() ); ?>" class="widefat" style="padding: 8px 12px; border-radius: 6px;">
+								</div>
+
+								<div>
+									<label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 5px;">📞 জরুরি ফোন নম্বর (বিজ্ঞাপন বিভাগ):</label>
+									<input type="text" name="bdk_ad_page_phone" value="<?php echo esc_attr( bdk_get_ad_page_phone() ); ?>" class="widefat" placeholder="+৮৮০ ১৭০০-০০০০০০ / ০১৮০০-০০০০০০" style="padding: 8px 12px; border-radius: 6px;">
+									<small style="color: #64748b; font-size: 11px;">একাধিক নম্বর থাকলে স্ল্যাশ (/) দিয়ে লিখুন।</small>
+								</div>
+
+								<div>
+									<label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 5px;">✉️ বিজ্ঞাপন ইমেইল ঠিকানা:</label>
+									<input type="email" name="bdk_ad_page_email" value="<?php echo esc_attr( bdk_get_ad_page_email() ); ?>" class="widefat" placeholder="ads@dainikbangladesherkotha.com" style="padding: 8px 12px; border-radius: 6px;">
+								</div>
+
+								<div style="border-top: 1px dashed #cbd5e1; padding-top: 14px; margin-top: 6px;">
+									<label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 5px;">💳 পেমেন্ট মাধ্যম শিরোনাম:</label>
+									<input type="text" name="bdk_ad_page_payment_title" value="<?php echo esc_attr( bdk_get_ad_page_payment_title() ); ?>" class="widefat" style="padding: 8px 12px; border-radius: 6px;">
+								</div>
+
+								<div>
+									<label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 5px;">পেমেন্ট বিবরণ / নির্দেশনা:</label>
+									<textarea name="bdk_ad_page_payment_desc" rows="3" class="widefat" style="padding: 8px 12px; border-radius: 6px;"><?php echo esc_textarea( bdk_get_ad_page_payment_desc() ); ?></textarea>
+								</div>
+							</div>
+						</div>
+
+						<!-- Right Column: Terms & Guidelines -->
+						<div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px;">
+							<h4 style="margin: 0 0 16px; color: #006a4e; font-size: 15px; font-weight: 700; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+								📝 বিজ্ঞাপনের শর্তাবলী ও বিন্যাস
+							</h4>
+
+							<div style="display: flex; flex-direction: column; gap: 14px;">
+								<div>
+									<label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 5px;">শর্তাবলী সেকশন শিরোনাম:</label>
+									<input type="text" name="bdk_ad_page_terms_title" value="<?php echo esc_attr( bdk_get_ad_page_terms_title() ); ?>" class="widefat" style="padding: 8px 12px; border-radius: 6px;">
+								</div>
+
+								<div>
+									<label style="font-size: 13px; font-weight: 700; color: #334155; display: block; margin-bottom: 5px;">শর্তাবলীর তালিকা (HTML <code>&lt;li&gt;...&lt;/li&gt;</code> সাপোর্টেড):</label>
+									<textarea name="bdk_ad_page_terms_content" rows="9" class="widefat" style="font-family: monospace; font-size: 12px; padding: 8px 12px; border-radius: 6px;"><?php echo esc_textarea( bdk_get_ad_page_terms_content() ); ?></textarea>
+									<small style="color: #64748b; font-size: 11px;">প্রতিটি নিয়ম বা শর্ত <code>&lt;li&gt;&lt;strong&gt;টপিক:&lt;/strong&gt; বর্ণনা&lt;/li&gt;</code> ফরম্যাটে লিখুন।</small>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<div style="margin-top: 24px;">
+						<button type="submit" class="button button-primary button-hero" style="background: #006a4e; border-color: #00442b; font-size: 15px; padding: 6px 24px; font-weight: 700; border-radius: 8px;">
+							💾 যোগাযোগ ও শর্তাবলী সেটিংস সংরক্ষণ করুন
+						</button>
+					</div>
+				</form>
 			</div>
 
 		<?php else : ?>
@@ -1131,6 +1227,11 @@ function bdk_submit_ad_booking_ajax() {
 
 	$headers = array( 'Content-Type: text/html; charset=UTF-8' );
 	wp_mail( $admin_email, $admin_subject, $admin_body, $headers );
+
+	$ad_email = bdk_get_ad_page_email();
+	if ( ! empty( $ad_email ) && is_email( $ad_email ) && $ad_email !== $admin_email ) {
+		wp_mail( $ad_email, $admin_subject, $admin_body, $headers );
+	}
 
 	$user_subject = $site_name . " - বিজ্ঞাপন বুকিং আবেদন প্রাপ্তি";
 	$user_body    = "<p>সম্মানিত {$applicant_name}, আপনার বিজ্ঞাপন বুকিং আবেদনটি সফলভাবে গৃহীত হয়েছে। আমাদের এডভারটাইজিং টিম খুব শীঘ্রই আপনার সাথে যোগাযোগ করবে।</p>";

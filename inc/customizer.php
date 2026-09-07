@@ -548,6 +548,93 @@ function bdk_customize_register( $wp_customize ) {
 		'type'        => 'textarea',
 	) );
 
+	// ================= 3c. ADVERTISING PAGE & CONTACT SETTINGS =================
+	$wp_customize->add_section( 'bdk_advertising_section', array(
+		'title'       => '📢 বিজ্ঞাপন পেজ ও যোগাযোগ সেটিংস (Advertising Info)',
+		'priority'    => 29,
+		'description' => 'বিজ্ঞাপন পেজ (/advertising) এর জরুরি যোগাযোগ নম্বর, ইমেইল, পেমেন্ট মাধ্যম ও শর্তাবলী এখান থেকে পরিবর্তন করুন।',
+	) );
+
+	// 1. Contact Box Title
+	$wp_customize->add_setting( 'bdk_ad_page_contact_title', array(
+		'default'           => '📞 জরুরি যোগাযোগ (বিজ্ঞাপন বিভাগ):',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'bdk_ad_page_contact_title', array(
+		'label'       => 'জরুরি যোগাযোগ শিরোনাম (Heading)',
+		'section'     => 'bdk_advertising_section',
+		'type'        => 'text',
+	) );
+
+	// 2. Emergency Phone Numbers
+	$wp_customize->add_setting( 'bdk_ad_page_phone', array(
+		'default'           => '+৮৮০ ১৭০০-০০০০০০ / ০১৮০০-০০০০০০',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'bdk_ad_page_phone', array(
+		'label'       => 'বিজ্ঞাপন ফোন নম্বর (Phone Numbers)',
+		'description' => 'যেমন: +৮৮০ ১৭০০-০০০০০০ / ০১৮০০-০০০০০০',
+		'section'     => 'bdk_advertising_section',
+		'type'        => 'text',
+	) );
+
+	// 3. Ad Email
+	$wp_customize->add_setting( 'bdk_ad_page_email', array(
+		'default'           => 'ads@dainikbangladesherkotha.com',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'bdk_ad_page_email', array(
+		'label'       => 'বিজ্ঞাপন ইমেইল (Ad Email)',
+		'description' => 'যেমন: ads@dainikbangladesherkotha.com',
+		'section'     => 'bdk_advertising_section',
+		'type'        => 'text',
+	) );
+
+	// 4. Payment Box Title
+	$wp_customize->add_setting( 'bdk_ad_page_payment_title', array(
+		'default'           => 'পেমেন্ট মাধ্যম ও সরাসরি যোগাযোগ:',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'bdk_ad_page_payment_title', array(
+		'label'       => 'পেমেন্ট বক্স শিরোনাম',
+		'section'     => 'bdk_advertising_section',
+		'type'        => 'text',
+	) );
+
+	// 5. Payment Box Description
+	$wp_customize->add_setting( 'bdk_ad_page_payment_desc', array(
+		'default'           => 'বুকিং কনফার্ম হওয়ার পর বিকাশ, নগদ, রকেট অথবা সরাসরি ব্যাংক ট্রান্সফারের মাধ্যমে পেমেন্ট সম্পন্ন করতে পারবেন।',
+		'sanitize_callback' => 'sanitize_textarea_field',
+	) );
+	$wp_customize->add_control( 'bdk_ad_page_payment_desc', array(
+		'label'       => 'পেমেন্ট মাধ্যম সংক্রান্ত বিবরণ',
+		'section'     => 'bdk_advertising_section',
+		'type'        => 'textarea',
+	) );
+
+	// 6. Terms Box Title
+	$wp_customize->add_setting( 'bdk_ad_page_terms_title', array(
+		'default'           => 'বিজ্ঞাপনের শর্তাবলী ও বিন্যাস:',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'bdk_ad_page_terms_title', array(
+		'label'       => 'বিজ্ঞাপনের শর্তাবলী শিরোনাম',
+		'section'     => 'bdk_advertising_section',
+		'type'        => 'text',
+	) );
+
+	// 7. Terms Box Content (List)
+	$wp_customize->add_setting( 'bdk_ad_page_terms_content', array(
+		'default'           => "<li><strong>ফরম্যাট:</strong> JPG, PNG, Static GIF অথবা Animated Banner গ্রহণযোগ্য।</li>\n<li><strong>সর্বোচ্চ ফাইল সাইজ:</strong> ব্যানার ফাইলের সাইজ ১৫০ KB এর মধ্যে হতে হবে।</li>\n<li><strong>ব্যানার ডিজাইন:</strong> প্রয়োজনে আমাদের অভিজ্ঞ গ্রাফিক ডিজাইনার দিয়ে আকর্ষণীয় ব্যানার তৈরি সুবিধা রয়েছে।</li>\n<li><strong>বিজ্ঞাপন অনুমোদন:</strong> জাতীয় নীতিমালার পরিপন্থী, অবাস্তব বা বিভ্রান্তিকর কোনো বিজ্ঞাপন প্রকাশ করা হয় না।</li>",
+		'sanitize_callback' => 'wp_kses_post',
+	) );
+	$wp_customize->add_control( 'bdk_ad_page_terms_content', array(
+		'label'       => 'শর্তাবলীর তালিকা (HTML <li>...</li> সাপোর্টেড)',
+		'description' => 'প্রতিটি পয়েন্ট <li>...</li> দিয়ে লিখুন।',
+		'section'     => 'bdk_advertising_section',
+		'type'        => 'textarea',
+	) );
+
 	// ================= 4. SOCIAL MEDIA LINKS =================
 	$wp_customize->add_section( 'bdk_social_section', array(
 		'title'    => '🌐 সোশ্যাল মিডিয়া লিংক (Social Links)',

@@ -504,3 +504,37 @@ function bdk_comment_reaction_ajax() {
 	) );
 }
 
+/**
+ * Advertising Page Settings Helpers
+ */
+function bdk_get_ad_page_contact_title() {
+	return get_theme_mod( 'bdk_ad_page_contact_title', '📞 জরুরি যোগাযোগ (বিজ্ঞাপন বিভাগ):' );
+}
+
+function bdk_get_ad_page_phone() {
+	return get_theme_mod( 'bdk_ad_page_phone', '+৮৮০ ১৭০০-০০০০০০ / ০১৮০০-০০০০০০' );
+}
+
+function bdk_get_ad_page_email() {
+	return get_theme_mod( 'bdk_ad_page_email', 'ads@dainikbangladesherkotha.com' );
+}
+
+function bdk_get_ad_page_payment_title() {
+	return get_theme_mod( 'bdk_ad_page_payment_title', 'পেমেন্ট মাধ্যম ও সরাসরি যোগাযোগ:' );
+}
+
+function bdk_get_ad_page_payment_desc() {
+	return get_theme_mod( 'bdk_ad_page_payment_desc', 'বুকিং কনফার্ম হওয়ার পর বিকাশ, নগদ, রকেট অথবা সরাসরি ব্যাংক ট্রান্সফারের মাধ্যমে পেমেন্ট সম্পন্ন করতে পারবেন।' );
+}
+
+function bdk_get_ad_page_terms_title() {
+	return get_theme_mod( 'bdk_ad_page_terms_title', 'বিজ্ঞাপনের শর্তাবলী ও বিন্যাস:' );
+}
+
+function bdk_get_ad_page_terms_content() {
+	$default = "<li><strong>ফরম্যাট:</strong> JPG, PNG, Static GIF অথবা Animated Banner গ্রহণযোগ্য।</li>\n" .
+		"<li><strong>সর্বোচ্চ ফাইল সাইজ:</strong> ব্যানার ফাইলের সাইজ ১৫০ KB এর মধ্যে হতে হবে।</li>\n" .
+		"<li><strong>ব্যানার ডিজাইন:</strong> প্রয়োজনে আমাদের অভিজ্ঞ গ্রাফিক ডিজাইনার দিয়ে আকর্ষণীয় ব্যানার তৈরি সুবিধা রয়েছে।</li>\n" .
+		"<li><strong>বিজ্ঞাপন অনুমোদন:</strong> জাতীয় নীতিমালার পরিপন্থী, অবাস্তব বা বিভ্রান্তিকর কোনো বিজ্ঞাপন প্রকাশ করা হয় না।</li>";
+	return get_theme_mod( 'bdk_ad_page_terms_content', $default );
+}
