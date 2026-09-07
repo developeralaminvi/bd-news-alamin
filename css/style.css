@@ -2867,6 +2867,30 @@ ol {
   background: var(--primary-light);
 }
 
+.comment-action-btn.is-liked {
+  color: var(--primary-color, #0284c7) !important;
+  background: var(--primary-light, rgba(2, 132, 199, 0.12)) !important;
+  font-weight: 700;
+}
+
+.comment-action-btn.is-liked i {
+  color: var(--primary-color, #0284c7);
+  transform: scale(1.15);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.comment-action-btn.is-disliked {
+  color: var(--accent-color, #dc2626) !important;
+  background: rgba(220, 38, 38, 0.08) !important;
+  font-weight: 700;
+}
+
+.comment-action-btn.is-disliked i {
+  color: var(--accent-color, #dc2626);
+  transform: scale(1.15);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 /* Threaded / Nested Reply Comment */
 .comment-nested-reply {
   margin-top: 1rem;

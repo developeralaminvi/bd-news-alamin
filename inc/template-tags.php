@@ -398,3 +398,62 @@ function bdk_append_mobile_cta_to_nav( $items, $args ) {
 }
 add_filter( 'wp_nav_menu_items', 'bdk_append_mobile_cta_to_nav', 10, 2 );
 
+/**
+ * Comment Reactions (Real-time Likes & Dislikes) System
+ */
+function bdk_get_comment_likes( $comment_id ) {
+	return (int) get_comment_meta( $comment_id, '_bdk_comment_likes', true );
+}
+
+function bdk_get_comment_dislikes( $comment_id ) {
+	return (int) get_comment_meta( $comment_id, '_bdk_comment_dislikes', true );
+}
+
+add_action( 'wp_ajax_bdk_comment_reaction', 'bdk_comment_reaction_ajax' );
+add_action( 'wp_ajax_nopriv_bdk_comment_reaction', 'bdk_comment_reaction_ajax' );
+function bdk_comment_reaction_ajax() {
+	check_ajax_referer( 'bdk_ajax_nonce', 'nonce' );
+
+	$comment_id = isset( $_POST['comment_id'] ) ? absint( $_POST['comment_id'] ) : 0;
+	$reaction   = isset( $_POST['reaction'] ) && in_array( $_POST['reaction'], array( 'like', 'dislike' ), true ) ? sanitize_text_field( $_POST['reaction'] ) : 'like';
+	$action_type = isset( $_POST['action_type'] ) && in_array( $_POST['action_type'], array( 'add', 'remove' ), true ) ? sanitize_text_field( $_POST['action_type'] ) : 'add';
+
+	if ( ! $comment_id ) {
+		wp_send_json_error( array( 'message' => 'Invalid comment ID' ) );
+	}
+
+	$comment = get_comment( $comment_id );
+	if ( ! $comment ) {
+		wp_send_json_error( array( 'message' => 'Comment not found' ) );
+	}
+
+	$meta_key = ( 'like' === $reaction ) ? '_bdk_comment_likes' : '_bdk_comment_dislikes';
+	$current  = (int) get_comment_meta( $comment_id, $meta_key, true );
+
+	if ( 'remove' === $action_type ) {
+		$new_val = max( 0, $current - 1 );
+	} else {
+		$new_val = $current + 1;
+	}
+	update_comment_meta( $comment_id, $meta_key, $new_val );
+
+	// If switching reaction (e.g. from dislike to like, or like to dislike)
+	if ( ! empty( $_POST['previous_reaction'] ) && in_array( $_POST['previous_reaction'], array( 'like', 'dislike' ), true ) && $_POST['previous_reaction'] !== $reaction ) {
+		$prev_reaction = sanitize_text_field( $_POST['previous_reaction'] );
+		$prev_meta_key = ( 'like' === $prev_reaction ) ? '_bdk_comment_likes' : '_bdk_comment_dislikes';
+		$prev_val      = (int) get_comment_meta( $comment_id, $prev_meta_key, true );
+		$new_prev_val  = max( 0, $prev_val - 1 );
+		update_comment_meta( $comment_id, $prev_meta_key, $new_prev_val );
+	}
+
+	$likes    = (int) get_comment_meta( $comment_id, '_bdk_comment_likes', true );
+	$dislikes = (int) get_comment_meta( $comment_id, '_bdk_comment_dislikes', true );
+
+	wp_send_json_success( array(
+		'likes'            => $likes,
+		'dislikes'         => $dislikes,
+		'likes_bengali'    => $likes > 0 ? bdk_to_bengali_numerals( $likes ) : '',
+		'dislikes_bengali' => $dislikes > 0 ? bdk_to_bengali_numerals( $dislikes ) : '',
+	) );
+}
+

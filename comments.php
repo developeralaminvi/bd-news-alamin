@@ -134,12 +134,17 @@ function bdk_custom_comment_callback( $comment, $args, $depth ) {
 				<?php comment_text(); ?>
 			</div>
 
+			<?php
+			$comment_id = get_comment_ID();
+			$likes      = (int) get_comment_meta( $comment_id, '_bdk_comment_likes', true );
+			$dislikes   = (int) get_comment_meta( $comment_id, '_bdk_comment_dislikes', true );
+			?>
 			<div class="comment-actions-bar">
-				<button type="button" class="comment-action-btn" onclick="let s=this.querySelector('span'); s.innerText=parseInt(s.innerText)+1;">
-					<i class="far fa-thumbs-up"></i> <span>৫</span>
+				<button type="button" class="comment-action-btn bdk-comment-reaction-btn bdk-comment-like-btn" data-comment-id="<?php echo esc_attr( $comment_id ); ?>" data-type="like" title="পছন্দ করুন">
+					<i class="far fa-thumbs-up"></i> <span class="reaction-count"><?php echo $likes > 0 ? bdk_to_bengali_numerals( $likes ) : ''; ?></span>
 				</button>
-				<button type="button" class="comment-action-btn" onclick="let s=this.querySelector('span'); s.innerText=parseInt(s.innerText)+1;">
-					<i class="far fa-thumbs-down"></i> <span>০</span>
+				<button type="button" class="comment-action-btn bdk-comment-reaction-btn bdk-comment-dislike-btn" data-comment-id="<?php echo esc_attr( $comment_id ); ?>" data-type="dislike" title="অপছন্দ">
+					<i class="far fa-thumbs-down"></i> <span class="reaction-count"><?php echo $dislikes > 0 ? bdk_to_bengali_numerals( $dislikes ) : ''; ?></span>
 				</button>
 				<?php
 				comment_reply_link( array_merge( $args, array(

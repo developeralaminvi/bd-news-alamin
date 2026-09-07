@@ -367,4 +367,152 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   });
+
+  // 11. Comment Reactions (Real-time Like & Dislike)
+  const LOCAL_STORAGE_KEY = 'bdk_comment_reactions_v1';
+  let userReactions = {};
+  try {
+    userReactions = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
+  } catch (e) {
+    userReactions = {};
+  }
+
+  function bdkToBengaliNumber(num) {
+    if (!num || num <= 0) return '';
+    const digits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return String(num).replace(/[0-9]/g, function (w) {
+      return digits[+w];
+    });
+  }
+
+  function bdkFromBengaliNumber(str) {
+    if (!str) return 0;
+    const digits = { '০': 0, '১': 1, '২': 2, '৩': 3, '৪': 4, '৫': 5, '৬': 6, '৭': 7, '৮': 8, '৯': 9 };
+    const english = String(str).trim().replace(/[০-৯]/g, function (d) {
+      return digits[d];
+    });
+    return parseInt(english, 10) || 0;
+  }
+
+  // Restore saved reaction state on page load
+  document.querySelectorAll('.bdk-comment-reaction-btn').forEach(function (btn) {
+    const commentId = btn.getAttribute('data-comment-id');
+    const type = btn.getAttribute('data-type');
+    if (commentId && userReactions[commentId] === type) {
+      btn.classList.add(type === 'like' ? 'is-liked' : 'is-disliked');
+      const icon = btn.querySelector('i');
+      if (icon) {
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+      }
+    }
+  });
+
+  // Handle click on comment like/dislike buttons
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.bdk-comment-reaction-btn');
+    if (!btn) return;
+    e.preventDefault();
+
+    const commentId = btn.getAttribute('data-comment-id');
+    const type = btn.getAttribute('data-type'); // 'like' or 'dislike'
+    if (!commentId || !type) return;
+
+    const parentBar = btn.closest('.comment-actions-bar');
+    const likeBtn = parentBar ? parentBar.querySelector('.bdk-comment-like-btn') : null;
+    const dislikeBtn = parentBar ? parentBar.querySelector('.bdk-comment-dislike-btn') : null;
+
+    const currentReaction = userReactions[commentId] || null;
+    let actionType = 'add';
+    let previousReaction = null;
+
+    if (currentReaction === type) {
+      // Toggle off (unlike / undislike)
+      actionType = 'remove';
+      delete userReactions[commentId];
+      btn.classList.remove(type === 'like' ? 'is-liked' : 'is-disliked');
+      const icon = btn.querySelector('i');
+      if (icon) {
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+      }
+      const countSpan = btn.querySelector('.reaction-count');
+      if (countSpan) {
+        const curCount = bdkFromBengaliNumber(countSpan.textContent);
+        const newCount = Math.max(0, curCount - 1);
+        countSpan.textContent = bdkToBengaliNumber(newCount);
+      }
+    } else {
+      // Add or switch reaction
+      actionType = 'add';
+      if (currentReaction) {
+        previousReaction = currentReaction;
+        const prevBtn = currentReaction === 'like' ? likeBtn : dislikeBtn;
+        if (prevBtn) {
+          prevBtn.classList.remove(currentReaction === 'like' ? 'is-liked' : 'is-disliked');
+          const prevIcon = prevBtn.querySelector('i');
+          if (prevIcon) {
+            prevIcon.classList.remove('fas');
+            prevIcon.classList.add('far');
+          }
+          const prevSpan = prevBtn.querySelector('.reaction-count');
+          if (prevSpan) {
+            const curCount = bdkFromBengaliNumber(prevSpan.textContent);
+            const newCount = Math.max(0, curCount - 1);
+            prevSpan.textContent = bdkToBengaliNumber(newCount);
+          }
+        }
+      }
+
+      userReactions[commentId] = type;
+      btn.classList.add(type === 'like' ? 'is-liked' : 'is-disliked');
+      const icon = btn.querySelector('i');
+      if (icon) {
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+      }
+      const countSpan = btn.querySelector('.reaction-count');
+      if (countSpan) {
+        const curCount = bdkFromBengaliNumber(countSpan.textContent);
+        const newCount = curCount + 1;
+        countSpan.textContent = bdkToBengaliNumber(newCount);
+      }
+    }
+
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(userReactions));
+    } catch (err) {}
+
+    // Send AJAX request to WordPress
+    if (window.bdk_vars && window.bdk_vars.ajax_url) {
+      const fd = new FormData();
+      fd.append('action', 'bdk_comment_reaction');
+      fd.append('comment_id', commentId);
+      fd.append('reaction', type);
+      fd.append('action_type', actionType);
+      if (previousReaction) {
+        fd.append('previous_reaction', previousReaction);
+      }
+      fd.append('nonce', window.bdk_vars.nonce || '');
+
+      fetch(window.bdk_vars.ajax_url, {
+        method: 'POST',
+        body: fd
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res && res.success && res.data) {
+          if (likeBtn) {
+            const span = likeBtn.querySelector('.reaction-count');
+            if (span) span.textContent = res.data.likes_bengali || '';
+          }
+          if (dislikeBtn) {
+            const span = dislikeBtn.querySelector('.reaction-count');
+            if (span) span.textContent = res.data.dislikes_bengali || '';
+          }
+        }
+      })
+      .catch(() => {});
+    }
+  });
 });
