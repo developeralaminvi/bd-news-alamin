@@ -257,12 +257,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  const printBtn = document.getElementById('printArticleBtn');
-  if (printBtn) {
-    printBtn.addEventListener('click', () => {
+  const printBtns = document.querySelectorAll('#printArticleBtn, .print-btn, .print-article-btn');
+  printBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
       window.print();
     });
-  }
+  });
 
   // 8. Copy Link Button with Smooth Toast & Button State Feedback
   function showCopyToast(message) {

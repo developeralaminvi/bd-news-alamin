@@ -79,6 +79,19 @@ while ( have_posts() ) : the_post();
       <!-- Left Column: Photo Feature Content -->
       <article class="single-article-main">
         
+        <!-- Print-Only Newspaper Masthead -->
+        <div class="bdk-print-masthead">
+          <div class="bdk-print-masthead-top">
+            <h2 class="bdk-print-site-name"><?php echo esc_html( bdk_get_site_name() ); ?></h2>
+            <span class="bdk-print-site-url"><?php echo esc_html( preg_replace( '(^https?://)', '', home_url() ) ); ?></span>
+          </div>
+          <div class="bdk-print-masthead-meta">
+            <span class="bdk-print-cat"><strong>বিভাগ:</strong> ছবির গল্প ও ফটো ফিচার</span>
+            <span class="bdk-print-date"><strong>মুদ্রণ:</strong> <?php echo esc_html( bdk_bengali_date() ); ?></span>
+          </div>
+          <div class="bdk-print-divider"></div>
+        </div>
+
         <!-- 1. Breadcrumbs -->
         <nav class="breadcrumb-bar">
           <a href="<?php echo esc_url( home_url( '/' ) ); ?>">প্রচ্ছদ</a>
@@ -185,6 +198,22 @@ while ( have_posts() ) : the_post();
           comments_template();
         endif;
         ?>
+
+        <!-- Print-Only Newspaper Footer -->
+        <div class="bdk-print-footer">
+          <div class="bdk-print-divider"></div>
+          <div class="bdk-print-footer-grid">
+            <div class="bdk-print-footer-source">
+              <strong><?php echo esc_html( bdk_get_site_name() ); ?></strong> — ছবির গল্প বিভাগ
+            </div>
+            <div class="bdk-print-footer-link">
+              অনলাইন লিংক: <?php echo esc_url( get_permalink() ); ?>
+            </div>
+          </div>
+          <div class="bdk-print-copyright">
+            © <?php echo date( 'Y' ); ?> <?php echo esc_html( bdk_get_site_name() ); ?> | সর্বস্বত্ব সংরক্ষিত।
+          </div>
+        </div>
 
       </article>
 
