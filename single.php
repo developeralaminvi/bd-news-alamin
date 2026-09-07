@@ -25,21 +25,6 @@ while ( have_posts() ) : the_post();
       <!-- Left Column: Article Content -->
       <article class="single-article-main" id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
         
-        <!-- Print-Only Newspaper Masthead -->
-        <div class="bdk-print-masthead">
-          <div class="bdk-print-masthead-top">
-            <h2 class="bdk-print-site-name"><?php echo esc_html( bdk_get_site_name() ); ?></h2>
-            <span class="bdk-print-site-url"><?php echo esc_html( preg_replace( '(^https?://)', '', home_url() ) ); ?></span>
-          </div>
-          <div class="bdk-print-masthead-meta">
-            <?php if ( $primary_cat ) : ?>
-              <span class="bdk-print-cat"><strong>বিভাগ:</strong> <?php echo esc_html( $primary_cat->name ); ?></span>
-            <?php endif; ?>
-            <span class="bdk-print-date"><strong>মুদ্রণ:</strong> <?php echo esc_html( bdk_bengali_date() ); ?></span>
-          </div>
-          <div class="bdk-print-divider"></div>
-        </div>
-
         <!-- 1. Breadcrumbs -->
         <nav class="breadcrumb-bar">
           <a href="<?php echo esc_url( home_url( '/' ) ); ?>">প্রচ্ছদ</a>
@@ -120,14 +105,21 @@ while ( have_posts() ) : the_post();
             <?php else : ?>
               <img src="<?php echo esc_url( bdk_get_default_post_thumbnail_url() ); ?>" alt="<?php the_title_attribute(); ?>" style="width: 100%; border-radius: var(--radius-md); max-height: 480px; object-fit: cover;">
             <?php endif; ?>
-            <figcaption class="article-image-caption" style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.5rem; border-left: 3px solid var(--primary-color); padding-left: 0.5rem;">
-              ছবি: <?php echo get_the_post_thumbnail_caption() ?: get_the_title() . ' | ' . bdk_get_site_name(); ?>
-            </figcaption>
+            <?php 
+            $img_caption = get_the_post_thumbnail_caption();
+            if ( ! empty( $img_caption ) ) : 
+            ?>
+              <figcaption class="article-image-caption" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
+                ছবি: <?php echo esc_html( $img_caption ); ?>
+              </figcaption>
+            <?php endif; ?>
           </figure>
         <?php endif; ?>
 
         <!-- Top In-Article Banner Ad Slot -->
-        <?php bdk_display_ad_slot( 'bdk_single_top_ad', 'শীর্ষ ব্যানার বিজ্ঞাপন', '৪১২×৯০ Leaderboard' ); ?>
+        <div class="no-print">
+          <?php bdk_display_ad_slot( 'bdk_single_top_ad', 'শীর্ষ ব্যানার বিজ্ঞাপন', '৪১২×৯০ Leaderboard' ); ?>
+        </div>
 
         <!-- 5. Article Body Content -->
         <div class="article-body-content" id="articleBodyContent">
@@ -135,7 +127,9 @@ while ( have_posts() ) : the_post();
         </div>
 
         <!-- 6. Mid-content In-Article Banner Ad Slot -->
-        <?php bdk_display_ad_slot( 'bdk_single_mid_ad', 'ইন-আর্টিকেল বিজ্ঞাপন', 'In-Article Ad Slot' ); ?>
+        <div class="no-print">
+          <?php bdk_display_ad_slot( 'bdk_single_mid_ad', 'ইন-আর্টিকেল বিজ্ঞাপন', 'In-Article Ad Slot' ); ?>
+        </div>
 
         <!-- 7. Social Share Bar -->
         <div class="share-bar-sticky">
@@ -209,7 +203,9 @@ while ( have_posts() ) : the_post();
         <?php endif; endif; ?>
 
         <!-- Bottom Banner Ad Slot (Before Comments) -->
-        <?php bdk_display_ad_slot( 'bdk_single_bot_ad', 'নিচের ব্যানার বিজ্ঞাপন', 'মন্তব্য বিভাগের আগে' ); ?>
+        <div class="no-print">
+          <?php bdk_display_ad_slot( 'bdk_single_bot_ad', 'নিচের ব্যানার বিজ্ঞাপন', 'মন্তব্য বিভাগের আগে' ); ?>
+        </div>
 
         <!-- 10. Comments Section -->
         <?php
@@ -217,22 +213,6 @@ while ( have_posts() ) : the_post();
           comments_template();
         endif;
         ?>
-
-        <!-- Print-Only Newspaper Footer -->
-        <div class="bdk-print-footer">
-          <div class="bdk-print-divider"></div>
-          <div class="bdk-print-footer-grid">
-            <div class="bdk-print-footer-source">
-              <strong><?php echo esc_html( bdk_get_site_name() ); ?></strong> — বস্তুনিষ্ঠ ও নিরপেক্ষ সংবাদের প্রতীক
-            </div>
-            <div class="bdk-print-footer-link">
-              অনলাইন লিংক: <?php echo esc_url( get_permalink() ); ?>
-            </div>
-          </div>
-          <div class="bdk-print-copyright">
-            © <?php echo date( 'Y' ); ?> <?php echo esc_html( bdk_get_site_name() ); ?> | সর্বস্বত্ব সংরক্ষিত।
-          </div>
-        </div>
 
       </article>
 

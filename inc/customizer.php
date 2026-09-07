@@ -806,7 +806,7 @@ function bdk_display_ad_slot( $slot_key, $slot_title = 'বিজ্ঞাপন
 				$banner = $banners[ array_rand( $banners ) ];
 				$b_id   = $banner['id'];
 				?>
-				<div id="<?php echo esc_attr( $wrapper_id ); ?>" class="theme-ad-wrapper bdk-multi-ad-wrapper" style="margin: 1.25rem auto; text-align: center; max-width: 100%;">
+				<div id="<?php echo esc_attr( $wrapper_id ); ?>" class="theme-ad-wrapper bdk-multi-ad-wrapper no-print" style="margin: 1.25rem auto; text-align: center; max-width: 100%;">
 					<span class="ad-badge" style="display:inline-block; font-size:9px; font-weight:700; color:#888; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">বিজ্ঞাপন</span><br>
 					<?php if ( ! empty( $banner['image'] ) ) : ?>
 						<a href="<?php echo esc_url( ! empty( $banner['link'] ) ? $banner['link'] : '#' ); ?>" target="_blank" rel="noopener nofollow" class="bdk-trackable-ad-link" data-slot="<?php echo esc_attr( $slot_key ); ?>" data-banner="<?php echo esc_attr( $b_id ); ?>" style="display:inline-block; max-width:100%; line-height:0; text-decoration:none;">
@@ -835,7 +835,7 @@ function bdk_display_ad_slot( $slot_key, $slot_title = 'বিজ্ঞাপন
 				// Auto Rotation Slider Mode
 				$container_id = 'bdk_ad_slider_' . sanitize_html_class( $slot_key ) . '_' . rand( 100, 999 );
 				?>
-				<div id="<?php echo esc_attr( $wrapper_id ); ?>" class="theme-ad-wrapper bdk-multi-ad-slider" style="margin: 1.25rem auto; text-align: center; max-width: 100%; position: relative;">
+				<div id="<?php echo esc_attr( $wrapper_id ); ?>" class="theme-ad-wrapper bdk-multi-ad-slider no-print" style="margin: 1.25rem auto; text-align: center; max-width: 100%; position: relative;">
 					<span class="ad-badge" style="display:inline-block; font-size:9px; font-weight:700; color:#888; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">বিজ্ঞাপন</span><br>
 					<div id="<?php echo esc_attr( $container_id ); ?>" class="bdk-ad-slides-container" style="position: relative;">
 						<?php foreach ( $banners as $idx => $b ) : ?>
@@ -889,7 +889,7 @@ function bdk_display_ad_slot( $slot_key, $slot_title = 'বিজ্ঞাপন
 				$banner = $banners[0];
 				$b_id   = $banner['id'];
 				?>
-				<div id="<?php echo esc_attr( $wrapper_id ); ?>" class="theme-ad-wrapper bdk-multi-ad-wrapper" style="margin: 1.25rem auto; text-align: center; max-width: 100%;">
+				<div id="<?php echo esc_attr( $wrapper_id ); ?>" class="theme-ad-wrapper bdk-multi-ad-wrapper no-print" style="margin: 1.25rem auto; text-align: center; max-width: 100%;">
 					<span class="ad-badge" style="display:inline-block; font-size:9px; font-weight:700; color:#888; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">বিজ্ঞাপন</span><br>
 					<?php if ( ! empty( $banner['image'] ) ) : ?>
 						<a href="<?php echo esc_url( ! empty( $banner['link'] ) ? $banner['link'] : '#' ); ?>" target="_blank" rel="noopener nofollow" class="bdk-trackable-ad-link" data-slot="<?php echo esc_attr( $slot_key ); ?>" data-banner="<?php echo esc_attr( $b_id ); ?>" style="display:inline-block; max-width:100%; line-height:0; text-decoration:none;">
@@ -930,12 +930,12 @@ function bdk_display_ad_slot( $slot_key, $slot_title = 'বিজ্ঞাপন
 	$fit_mode = get_theme_mod( "{$slot_key}_fit", 'contain' );
 
 	if ( ! empty( $ad_code ) ) {
-		echo '<div id="' . esc_attr( $wrapper_id ) . '" class="theme-ad-wrapper theme-ad-code-slot ' . esc_attr( $wrapper_id ) . esc_attr( $device_class ) . '" style="margin: 1.25rem auto; text-align: center; max-width: 100%;">';
+		echo '<div id="' . esc_attr( $wrapper_id ) . '" class="theme-ad-wrapper theme-ad-code-slot no-print ' . esc_attr( $wrapper_id ) . esc_attr( $device_class ) . '" style="margin: 1.25rem auto; text-align: center; max-width: 100%;">';
 		echo do_shortcode( $ad_code );
 		echo '</div>';
 	} elseif ( ! empty( $ad_image ) ) {
 		$fit_inline = ( 'auto' === $fit_mode ) ? 'height: auto; max-width: 100%;' : 'object-fit: ' . esc_attr( $fit_mode ) . '; width: 100%; max-width: 100%;';
-		echo '<div id="' . esc_attr( $wrapper_id ) . '" class="theme-ad-wrapper theme-ad-image-banner ' . esc_attr( $wrapper_id ) . esc_attr( $device_class ) . '" style="margin: 1.25rem auto; text-align: center; max-width: 100%;">';
+		echo '<div id="' . esc_attr( $wrapper_id ) . '" class="theme-ad-wrapper theme-ad-image-banner no-print ' . esc_attr( $wrapper_id ) . esc_attr( $device_class ) . '" style="margin: 1.25rem auto; text-align: center; max-width: 100%;">';
 		echo '<span class="ad-badge" style="display:inline-block; font-size:9px; font-weight:700; color:#888; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px;">বিজ্ঞাপন</span><br>';
 		if ( ! empty( $ad_link ) ) {
 			echo '<a href="' . esc_url( $ad_link ) . '" target="_blank" rel="noopener nofollow" class="theme-ad-link" style="display:inline-block; max-width:100%; line-height:0; text-decoration:none;">';
@@ -951,7 +951,7 @@ function bdk_display_ad_slot( $slot_key, $slot_title = 'বিজ্ঞাপন
 			return;
 		}
 		?>
-		<div id="<?php echo esc_attr( $wrapper_id ); ?>" class="theme-ad-placeholder <?php echo esc_attr( $wrapper_id ); ?><?php echo esc_attr( $device_class ); ?>" style="margin: 1.25rem auto; max-width: 970px; background: var(--surface-secondary); border: 2px dashed var(--border-color); border-radius: var(--radius-md); padding: 1.25rem 1.5rem; text-align: center; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+		<div id="<?php echo esc_attr( $wrapper_id ); ?>" class="theme-ad-placeholder no-print <?php echo esc_attr( $wrapper_id ); ?><?php echo esc_attr( $device_class ); ?>" style="margin: 1.25rem auto; max-width: 970px; background: var(--surface-secondary); border: 2px dashed var(--border-color); border-radius: var(--radius-md); padding: 1.25rem 1.5rem; text-align: center; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
 			<div style="text-align: left;">
 				<span class="ad-tag" style="background: var(--primary-color); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px;">বিজ্ঞাপন</span>
 				<h4 style="font-size: 1rem; font-weight: 700; color: var(--primary-color); margin: 4px 0 2px;"><?php echo esc_html( $slot_title ); ?></h4>

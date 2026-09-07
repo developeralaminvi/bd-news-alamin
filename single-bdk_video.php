@@ -47,19 +47,6 @@ while ( have_posts() ) : the_post();
       <!-- Main Content Column -->
       <article class="single-article-main" id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
         
-        <!-- Print-Only Newspaper Masthead -->
-        <div class="bdk-print-masthead">
-          <div class="bdk-print-masthead-top">
-            <h2 class="bdk-print-site-name"><?php echo esc_html( bdk_get_site_name() ); ?></h2>
-            <span class="bdk-print-site-url"><?php echo esc_html( preg_replace( '(^https?://)', '', home_url() ) ); ?></span>
-          </div>
-          <div class="bdk-print-masthead-meta">
-            <span class="bdk-print-cat"><strong>বিভাগ:</strong> <?php echo esc_html( $cat_name ); ?></span>
-            <span class="bdk-print-date"><strong>মুদ্রণ:</strong> <?php echo esc_html( bdk_bengali_date() ); ?></span>
-          </div>
-          <div class="bdk-print-divider"></div>
-        </div>
-
         <!-- 1. Breadcrumbs Navigation -->
         <nav class="breadcrumb-bar" style="margin-bottom: 1rem;">
           <a href="<?php echo esc_url( home_url( '/' ) ); ?>">প্রচ্ছদ</a>
@@ -129,9 +116,14 @@ while ( have_posts() ) : the_post();
           <?php if ( has_post_thumbnail() ) : ?>
             <figure class="article-featured-image" style="margin: 1.5rem 0;">
               <?php the_post_thumbnail( 'full', array( 'class' => 'featured-main-img' ) ); ?>
-              <figcaption class="article-image-caption">
-                ছবি: <?php echo get_the_post_thumbnail_caption() ?: get_the_title() . ' | ' . bdk_get_site_name(); ?>
-              </figcaption>
+              <?php 
+              $vid_caption = get_the_post_thumbnail_caption();
+              if ( ! empty( $vid_caption ) ) : 
+              ?>
+                <figcaption class="article-image-caption">
+                  ছবি: <?php echo esc_html( $vid_caption ); ?>
+                </figcaption>
+              <?php endif; ?>
             </figure>
           <?php endif; ?>
         </div>
@@ -193,9 +185,11 @@ while ( have_posts() ) : the_post();
         </div>
 
         <!-- Mid In-Article Banner Ad Slot -->
-        <?php if ( function_exists( 'bdk_display_ad_slot' ) ) : ?>
-          <?php bdk_display_ad_slot( 'bdk_single_mid_ad', 'ইন-আর্টিকেল বিজ্ঞাপন', 'In-Article Ad Slot' ); ?>
-        <?php endif; ?>
+        <div class="no-print">
+          <?php if ( function_exists( 'bdk_display_ad_slot' ) ) : ?>
+            <?php bdk_display_ad_slot( 'bdk_single_mid_ad', 'ইন-আর্টিকেল বিজ্ঞাপন', 'In-Article Ad Slot' ); ?>
+          <?php endif; ?>
+        </div>
 
         <!-- 7. Social Share Bar -->
         <div class="share-bar-sticky" style="margin: 2rem 0; padding: 1rem; background: var(--surface-secondary, #f8fafc); border: 1px solid var(--border-color); border-radius: var(--radius-md); display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
@@ -285,22 +279,6 @@ while ( have_posts() ) : the_post();
           comments_template();
         endif;
         ?>
-
-        <!-- Print-Only Newspaper Footer -->
-        <div class="bdk-print-footer">
-          <div class="bdk-print-divider"></div>
-          <div class="bdk-print-footer-grid">
-            <div class="bdk-print-footer-source">
-              <strong><?php echo esc_html( bdk_get_site_name() ); ?></strong> — ভিডিও সংবাদ বিভাগ
-            </div>
-            <div class="bdk-print-footer-link">
-              অনলাইন লিংক: <?php echo esc_url( get_permalink() ); ?>
-            </div>
-          </div>
-          <div class="bdk-print-copyright">
-            © <?php echo date( 'Y' ); ?> <?php echo esc_html( bdk_get_site_name() ); ?> | সর্বস্বত্ব সংরক্ষিত।
-          </div>
-        </div>
 
       </article>
 

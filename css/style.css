@@ -2525,7 +2525,8 @@ ol {
   color: var(--text-muted);
   margin-top: 0.5rem;
   text-align: center;
-  font-style: italic;
+  font-style: normal;
+  letter-spacing: normal;
 }
 
 .article-body-content {
@@ -4112,16 +4113,48 @@ ol {
   .district-filter-bar,
   .breaking-news-bar,
   .breadcrumb-bar,
+  .article-author-toolbar,
   .article-action-tools,
+  .author-meta-block,
+  .author-avatar,
   .photo-card-toolbar-item,
   .photocard-plugin-container,
   .share-bar-sticky,
   .opinion-card,
   .related-news-section,
   .related-videos-section,
+  .theme-ad-placeholder,
+  .theme-ad-wrapper,
+  .bdk-multi-ad-wrapper,
+  .bdk-multi-ad-slider,
+  .theme-ad-code-slot,
+  .theme-ad-image-banner,
+  .bdk-trackable-ad-link,
+  .bdk-trackable-ad-code,
+  .theme-ad-img,
+  .ad-badge,
+  .ad-tag,
+  .header-ad-box,
+  .footer-ad-container,
+  .advertisement-card,
+  .submit-brand-btn,
   .bdk-ad-slot-wrapper,
   .ad-banner-link,
-  .footer-ad-container,
+  .no-print,
+  .no-print *,
+  [class*="theme-ad"],
+  [class*="ad-placeholder"],
+  [class*="bdk-ad"],
+  [id*="ad-slot"],
+  [id*="bdk_ad"],
+  [id*="bdk_single"],
+  [id*="bdk_sidebar"],
+  [id*="bdk_header"],
+  [id*="bdk_footer"],
+  [id*="_ad_wrapper"],
+  [id*="ad-wrapper"],
+  a[href*="/advertising"],
+  a[href*="advertising"],
   .site-footer,
   .footer-editorial-panel,
   .footer-bottom-bar,
@@ -4137,7 +4170,6 @@ ol {
   .bdk-toast-notice,
   #photoCardModal,
   .azad-photo-modal-overlay,
-  .author-avatar,
   .mobile-nav-backdrop,
   .topbar-offcanvas,
   .mobile-filter-bar,
@@ -4156,6 +4188,7 @@ ol {
     display: none !important;
     visibility: hidden !important;
     height: 0 !important;
+    width: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
     border: none !important;
@@ -4194,112 +4227,37 @@ ol {
     background: transparent !important;
   }
 
-  /* 3. PRINT MASTHEAD (Newspaper Header) */
-  .bdk-print-masthead {
-    display: block !important;
-    margin-bottom: 1.25rem !important;
-    padding-bottom: 0.5rem !important;
-  }
-
-  .bdk-print-masthead-top {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: flex-end !important;
-    margin-bottom: 0.35rem !important;
-  }
-
-  .bdk-print-site-name {
-    font-size: 22pt !important;
-    font-weight: 900 !important;
-    color: #000000 !important;
-    margin: 0 !important;
-    line-height: 1.1 !important;
-    letter-spacing: -0.5px !important;
-  }
-
-  .bdk-print-site-url {
-    font-size: 9.5pt !important;
-    color: #444444 !important;
-    font-family: Consolas, "Courier New", monospace, sans-serif !important;
-  }
-
-  .bdk-print-masthead-meta {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    font-size: 9pt !important;
-    color: #333333 !important;
-    padding: 0.35rem 0 !important;
-    border-top: 1px dotted #888888 !important;
-  }
-
-  .bdk-print-divider {
-    height: 2px !important;
-    background: #000000 !important;
-    margin: 0.35rem 0 1rem 0 !important;
-    border: none !important;
-  }
-
-  /* 4. HEADLINES */
+  /* 3. HEADLINES (খবরের মূল শিরোনাম) */
   .article-headline {
-    font-size: 20pt !important;
+    font-size: 22pt !important;
     font-weight: 800 !important;
-    line-height: 1.25 !important;
+    line-height: 1.35 !important;
     color: #000000 !important;
-    margin: 0 0 0.5rem 0 !important;
+    margin: 0 0 1rem 0 !important;
     page-break-after: avoid !important;
     break-after: avoid !important;
+    font-family: 'SolaimanLipi', 'Hind Siliguri', 'Kalpurush', -apple-system, sans-serif !important;
+    letter-spacing: normal !important;
+    word-spacing: normal !important;
+    font-style: normal !important;
   }
 
   .article-subheadline {
-    font-size: 11pt !important;
-    line-height: 1.4 !important;
-    color: #333333 !important;
-    margin-bottom: 0.75rem !important;
-    font-style: italic !important;
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
+    color: #222222 !important;
+    margin-bottom: 1rem !important;
+    font-family: 'SolaimanLipi', 'Hind Siliguri', 'Kalpurush', -apple-system, sans-serif !important;
+    letter-spacing: normal !important;
+    font-style: normal !important;
     page-break-after: avoid !important;
     break-after: avoid !important;
   }
 
-  /* 5. AUTHOR & PUBLISH DATE META BAR */
-  .article-author-toolbar {
-    display: block !important;
-    padding: 0.35rem 0 !important;
-    margin: 0.5rem 0 1rem 0 !important;
-    border-top: 1px solid #cccccc !important;
-    border-bottom: 1px solid #cccccc !important;
-  }
-
-  .author-meta-block {
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-  }
-
-  .author-meta-text h5 {
-    font-size: 9.5pt !important;
-    font-weight: 700 !important;
-    color: #000000 !important;
-    margin: 0 !important;
-    display: inline !important;
-  }
-
-  .author-meta-text h5 a {
-    color: #000000 !important;
-    text-decoration: none !important;
-  }
-
-  .author-meta-text span {
-    font-size: 8.5pt !important;
-    color: #444444 !important;
-    margin-left: 0.5rem !important;
-    background: transparent !important;
-  }
-
-  /* 6. FEATURED IMAGE & CAPTION */
+  /* 4. FEATURED IMAGE (খবরের ছবি - সম্পূর্ণ ফ্রেশ, কোনো বর্ডার বা ক্যাপশন ছাড়া) */
   .article-featured-image {
     display: block !important;
-    margin: 1rem 0 1.25rem 0 !important;
+    margin: 1rem 0 1.5rem 0 !important;
     padding: 0 !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
@@ -4311,68 +4269,74 @@ ol {
     display: block !important;
     width: 100% !important;
     max-width: 100% !important;
-    max-height: 380px !important;
-    object-fit: cover !important;
+    height: auto !important;
+    max-height: 480px !important;
+    object-fit: contain !important;
     border-radius: 0 !important;
     margin: 0 auto !important;
-    border: 1px solid #e2e8f0 !important;
+    border: none !important;
+    box-shadow: none !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
 
   .article-image-caption {
-    font-size: 8.5pt !important;
-    color: #444444 !important;
-    margin-top: 0.4rem !important;
-    text-align: left !important;
-    border-left: 3px solid #000000 !important;
-    padding-left: 0.5rem !important;
-    font-style: italic !important;
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
   }
 
   .print-only-video-thumb {
     display: block !important;
   }
 
-  /* 7. ARTICLE CONTENT */
+  /* 5. ARTICLE CONTENT (খবরের মূল বিবরণী ও লেখা) */
   .article-body-content {
     display: block !important;
     width: 100% !important;
-    font-size: 11pt !important;
-    line-height: 1.7 !important;
+    font-size: 12pt !important;
+    line-height: 1.8 !important;
     color: #111111 !important;
-    text-align: justify !important;
+    text-align: left !important;
+    font-family: 'SolaimanLipi', 'Hind Siliguri', 'Kalpurush', -apple-system, sans-serif !important;
+    letter-spacing: normal !important;
+    word-spacing: normal !important;
     margin-top: 1rem !important;
   }
 
   .article-body-content p {
-    margin-bottom: 0.85rem !important;
+    margin-bottom: 1rem !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    orphans: 3 !important;
-    widows: 3 !important;
-    line-height: 1.7 !important;
+    line-height: 1.8 !important;
+    letter-spacing: normal !important;
+    font-style: normal !important;
   }
 
   .article-body-content h2,
   .article-body-content h3,
   .article-body-content h4 {
-    font-size: 13pt !important;
+    font-size: 14pt !important;
     font-weight: 700 !important;
     color: #000000 !important;
-    margin-top: 1.25rem !important;
+    margin-top: 1.5rem !important;
     margin-bottom: 0.5rem !important;
     page-break-after: avoid !important;
     break-after: avoid !important;
+    font-family: 'SolaimanLipi', 'Hind Siliguri', 'Kalpurush', -apple-system, sans-serif !important;
+    letter-spacing: normal !important;
   }
 
   .article-body-content blockquote {
     border-left: 3px solid #000000 !important;
     padding: 0.5rem 1rem !important;
     margin: 1rem 0 !important;
-    font-style: italic !important;
     color: #222222 !important;
     background: #f8f9fa !important;
+    font-style: normal !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
@@ -4394,7 +4358,8 @@ ol {
 
   .article-body-content li {
     margin-bottom: 0.35rem !important;
-    line-height: 1.6 !important;
+    line-height: 1.7 !important;
+    letter-spacing: normal !important;
   }
 
   .article-body-content a {
@@ -4407,7 +4372,7 @@ ol {
     content: "" !important;
   }
 
-  /* 8. PHOTO STORY GALLERY PRINT VIEW */
+  /* 6. PHOTO STORY GALLERY PRINT VIEW */
   .photo-story-gallery-grid {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -4434,50 +4399,10 @@ ol {
   }
 
   .photo-card-caption-box p {
-    font-size: 8.5pt !important;
+    font-size: 9pt !important;
     color: #222222 !important;
-    line-height: 1.35 !important;
-  }
-
-  /* 9. PRINT FOOTER */
-  .bdk-print-footer {
-    display: block !important;
-    margin-top: 1.5rem !important;
-    padding-top: 0.5rem !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-  }
-
-  .bdk-print-footer .bdk-print-divider {
-    height: 1px !important;
-    background: #000000 !important;
-    margin-bottom: 0.5rem !important;
-  }
-
-  .bdk-print-footer-grid {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
-    font-size: 8.5pt !important;
-    color: #333333 !important;
-  }
-
-  .bdk-print-footer-source {
-    font-weight: 600 !important;
-  }
-
-  .bdk-print-footer-link {
-    font-family: Consolas, "Courier New", monospace, sans-serif !important;
-    font-size: 8pt !important;
-    color: #555555 !important;
-  }
-
-  .bdk-print-copyright {
-    text-align: center !important;
-    font-size: 7.5pt !important;
-    color: #666666 !important;
-    margin-top: 0.35rem !important;
+    line-height: 1.4 !important;
+    letter-spacing: normal !important;
+    font-style: normal !important;
   }
 }
