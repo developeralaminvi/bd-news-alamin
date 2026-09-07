@@ -28,6 +28,13 @@ function bdk_get_category_id_by_slug( $slugs ) {
 }
 
 /**
+ * Sanitize Checkbox Inputs
+ */
+function bdk_sanitize_checkbox( $checked ) {
+	return ( ( isset( $checked ) && true === (bool) $checked ) ? true : false );
+}
+
+/**
  * Default homepage sections configuration
  */
 function bdk_get_default_homepage_sections() {
@@ -493,6 +500,52 @@ function bdk_customize_register( $wp_customize ) {
 		'label'   => 'অফিসিয়াল সাধারণ ইমেইল',
 		'section' => 'bdk_org_info_section',
 		'type'    => 'email',
+	) );
+
+	// ================= 3b. REPORTER RECRUITMENT SETTINGS =================
+	$wp_customize->add_section( 'bdk_recruitment_section', array(
+		'title'       => '📝 সাংবাদিক নিয়োগ সেটিংস (Recruitment)',
+		'priority'    => 28,
+		'description' => 'হেডার ও মেনুতে সাংবাদিক নিয়োগ বাটন এবং অনলাইন আবেদন অপশন চালু বা বন্ধ করার সেটিংস।',
+	) );
+
+	// 1. Enable / Disable Recruitment
+	$wp_customize->add_setting( 'bdk_enable_reporter_recruitment', array(
+		'default'           => true,
+		'sanitize_callback' => 'bdk_sanitize_checkbox',
+		'transport'         => 'refresh',
+	) );
+	$wp_customize->add_control( 'bdk_enable_reporter_recruitment', array(
+		'label'       => 'সাংবাদিক নিয়োগ চালু রাখুন (Enable Recruitment)',
+		'description' => 'অন থাকলে হেডার ও মেনুতে "সাংবাদিক নিয়োগ" বাটন প্রদর্শিত হবে এবং ভিজিটররা অনলাইনে আবেদন করতে পারবে। অফ করলে মেনু ও হেডারের বাটন লুকানো থাকবে এবং নিয়োগ আবেদন পেজে অ্যাক্সেস বন্ধ থাকবে।',
+		'section'     => 'bdk_recruitment_section',
+		'type'        => 'checkbox',
+	) );
+
+	// 2. Button Label
+	$wp_customize->add_setting( 'bdk_recruitment_btn_text', array(
+		'default'           => 'সাংবাদিক নিয়োগ',
+		'sanitize_callback' => 'sanitize_text_field',
+		'transport'         => 'refresh',
+	) );
+	$wp_customize->add_control( 'bdk_recruitment_btn_text', array(
+		'label'       => 'বাটনের টেক্সট (Button Label)',
+		'description' => 'হেডার ও মেনুর বাটনে যে লেখাটি প্রদর্শিত হবে (ডিফল্ট: সাংবাদিক নিয়োগ)।',
+		'section'     => 'bdk_recruitment_section',
+		'type'        => 'text',
+	) );
+
+	// 3. Closed Notice Message
+	$wp_customize->add_setting( 'bdk_recruitment_closed_msg', array(
+		'default'           => 'বর্তমানে নতুন সাংবাদিক নিয়োগ কার্যক্রম সাময়িকভাবে স্থগিত রয়েছে। পরবর্তী বিজ্ঞপ্তির জন্য আমাদের সাথে থাকুন।',
+		'sanitize_callback' => 'sanitize_textarea_field',
+		'transport'         => 'refresh',
+	) );
+	$wp_customize->add_control( 'bdk_recruitment_closed_msg', array(
+		'label'       => 'নিয়োগ বন্ধ থাকার নোটিশ (Notice when Closed)',
+		'description' => 'নিয়োগ অপশন অফ থাকলে আবেদন পেজে ভিজিটরদের এই বার্তাটি প্রদর্শিত হবে।',
+		'section'     => 'bdk_recruitment_section',
+		'type'        => 'textarea',
 	) );
 
 	// ================= 4. SOCIAL MEDIA LINKS =================

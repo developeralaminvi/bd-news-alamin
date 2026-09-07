@@ -355,18 +355,20 @@ function bdk_fallback_menu() {
 			</ul>
 		</li>
 		
+		<?php if ( is_user_logged_in() || bdk_is_recruitment_enabled() ) : ?>
 		<!-- Mobile Drawer Bottom CTA (Dashboard / Recruitment) -->
 		<li class="mobile-nav-cta-item" style="margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 0.5rem;">
 			<?php if ( is_user_logged_in() ) : ?>
 				<a href="<?php echo esc_url( home_url( '/reporter-dashboard' ) ); ?>" class="mobile-nav-cta-btn" style="background: #10b981; color: #ffffff !important; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0.75rem 1rem; border-radius: 8px; margin: 0.5rem 0.75rem; font-size: 0.95rem;">
 					<i class="fas fa-gauge"></i> ড্যাশবোর্ড
 				</a>
-			<?php else : ?>
+			<?php elseif ( bdk_is_recruitment_enabled() ) : ?>
 				<a href="<?php echo esc_url( home_url( '/reporter-account' ) ); ?>" class="mobile-nav-cta-btn" style="background: #dc2626; color: #ffffff !important; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0.75rem 1rem; border-radius: 8px; margin: 0.5rem 0.75rem; font-size: 0.95rem;">
-					<i class="fas fa-id-card-clip"></i> সাংবাদিক নিয়োগ (আবেদন করুন)
+					<i class="fas fa-id-card-clip"></i> <?php echo esc_html( bdk_get_recruitment_btn_text() ); ?>
 				</a>
 			<?php endif; ?>
 		</li>
+		<?php endif; ?>
 	</ul>
 	<?php
 }
@@ -376,6 +378,9 @@ function bdk_fallback_menu() {
  */
 function bdk_append_mobile_cta_to_nav( $items, $args ) {
 	if ( isset( $args->theme_location ) && 'primary' === $args->theme_location ) {
+		if ( ! is_user_logged_in() && ! bdk_is_recruitment_enabled() ) {
+			return $items;
+		}
 		ob_start();
 		?>
 		<!-- Mobile Drawer Bottom CTA (Dashboard / Recruitment) -->
@@ -384,9 +389,9 @@ function bdk_append_mobile_cta_to_nav( $items, $args ) {
 				<a href="<?php echo esc_url( home_url( '/reporter-dashboard' ) ); ?>" class="mobile-nav-cta-btn" style="background: #10b981; color: #ffffff !important; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0.75rem 1rem; border-radius: 8px; margin: 0.5rem 0.75rem; font-size: 0.95rem;">
 					<i class="fas fa-gauge"></i> ড্যাশবোর্ড
 				</a>
-			<?php else : ?>
+			<?php elseif ( bdk_is_recruitment_enabled() ) : ?>
 				<a href="<?php echo esc_url( home_url( '/reporter-account' ) ); ?>" class="mobile-nav-cta-btn" style="background: #dc2626; color: #ffffff !important; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0.75rem 1rem; border-radius: 8px; margin: 0.5rem 0.75rem; font-size: 0.95rem;">
-					<i class="fas fa-id-card-clip"></i> সাংবাদিক নিয়োগ (আবেদন করুন)
+					<i class="fas fa-id-card-clip"></i> <?php echo esc_html( bdk_get_recruitment_btn_text() ); ?>
 				</a>
 			<?php endif; ?>
 		</li>
@@ -397,6 +402,48 @@ function bdk_append_mobile_cta_to_nav( $items, $args ) {
 	return $items;
 }
 add_filter( 'wp_nav_menu_items', 'bdk_append_mobile_cta_to_nav', 10, 2 );
+
+/**
+ * Filter out recruitment menu items from navigation menus when disabled
+ */
+function bdk_filter_recruitment_menu_items( $items, $args ) {
+	if ( ! bdk_is_recruitment_enabled() && ! is_user_logged_in() ) {
+		if ( is_array( $items ) ) {
+			foreach ( $items as $key => $item ) {
+				$title = isset( $item->title ) ? $item->title : '';
+				$url   = isset( $item->url ) ? $item->url : '';
+				if ( false !== strpos( $title, 'সাংবাদিক নিয়োগ' ) || false !== strpos( $url, 'reporter-account' ) ) {
+					unset( $items[ $key ] );
+				}
+			}
+		}
+	}
+	return $items;
+}
+add_filter( 'wp_nav_menu_objects', 'bdk_filter_recruitment_menu_items', 10, 2 );
+
+/**
+ * Check if Reporter Recruitment is Enabled
+ */
+function bdk_is_recruitment_enabled() {
+	return (bool) get_theme_mod( 'bdk_enable_reporter_recruitment', true );
+}
+
+/**
+ * Get Recruitment Button Text
+ */
+function bdk_get_recruitment_btn_text() {
+	$text = get_theme_mod( 'bdk_recruitment_btn_text', 'সাংবাদিক নিয়োগ' );
+	return ! empty( $text ) ? $text : 'সাংবাদিক নিয়োগ';
+}
+
+/**
+ * Get Recruitment Closed Message
+ */
+function bdk_get_recruitment_closed_message() {
+	$msg = get_theme_mod( 'bdk_recruitment_closed_msg', 'বর্তমানে নতুন সাংবাদিক নিয়োগ কার্যক্রম সাময়িকভাবে স্থগিত রয়েছে। পরবর্তী বিজ্ঞপ্তির জন্য আমাদের সাথে থাকুন।' );
+	return ! empty( $msg ) ? $msg : 'বর্তমানে নতুন সাংবাদিক নিয়োগ কার্যক্রম সাময়িকভাবে স্থগিত রয়েছে।';
+}
 
 /**
  * Comment Reactions (Real-time Likes & Dislikes) System

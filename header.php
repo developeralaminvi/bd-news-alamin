@@ -127,9 +127,9 @@ $ig_url = get_theme_mod( 'bdk_social_instagram', 'https://instagram.com' );
           <a href="<?php echo esc_url( home_url( '/reporter-dashboard' ) ); ?>" class="live-tv-btn" style="background: #10b981;">
             <i class="fas fa-gauge"></i> ড্যাশবোর্ড
           </a>
-        <?php else : ?>
+        <?php elseif ( bdk_is_recruitment_enabled() ) : ?>
           <a href="<?php echo esc_url( home_url( '/reporter-account' ) ); ?>" class="live-tv-btn" style="background: #dc2626;">
-            <i class="fas fa-id-card-clip"></i> সাংবাদিক নিয়োগ
+            <i class="fas fa-id-card-clip"></i> <?php echo esc_html( bdk_get_recruitment_btn_text() ); ?>
           </a>
         <?php endif; ?>
 

@@ -116,6 +116,10 @@ function bdk_handle_reporter_registration() {
 		return;
 	}
 
+	if ( ! bdk_is_recruitment_enabled() ) {
+		wp_die( 'বর্তমানে নতুন সাংবাদিক নিয়োগ কার্যক্রম স্থগিত রয়েছে।' );
+	}
+
 	$full_name   = sanitize_text_field( $_POST['full_name'] ?? '' );
 	$phone       = sanitize_text_field( $_POST['phone'] ?? '' );
 	$username    = sanitize_user( $_POST['username'] ?? '' );

@@ -45,13 +45,23 @@ get_header();
           </ul>
 
           <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--primary-color); margin: 1.5rem 0 1rem;">ডিজিটাল সাংবাদিক নিয়োগ আবেদন</h2>
-          <div style="background: var(--surface-secondary); padding: 1.5rem; border-radius: var(--radius-md); border: 1px border var(--border-color); text-align: center; margin-top: 1rem;">
-            <p style="font-weight: 600; font-size: 1.05rem; margin-bottom: 1rem; color: var(--text-main);">
-              আপনার ছবি, তথ্য ও সিভি আপলোড করে সরাসরি অনলাইন পোর্টালে সাংবাদিক পদে আবেদন করুন।
-            </p>
-            <a href="<?php echo esc_url( home_url( '/reporter-account?tab=register' ) ); ?>" class="submit-brand-btn" style="padding: 0.85rem 2.2rem; font-size: 1rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-              <i class="fas fa-id-card-clip"></i> অনলাইন সাংবাদিক নিয়োগ ফরমটি পূরণ করুন
-            </a>
+          <div style="background: var(--surface-secondary); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); text-align: center; margin-top: 1rem;">
+            <?php if ( bdk_is_recruitment_enabled() ) : ?>
+              <p style="font-weight: 600; font-size: 1.05rem; margin-bottom: 1rem; color: var(--text-main);">
+                আপনার ছবি, তথ্য ও সিভি আপলোড করে সরাসরি অনলাইন পোর্টালে সাংবাদিক পদে আবেদন করুন।
+              </p>
+              <a href="<?php echo esc_url( home_url( '/reporter-account?tab=register' ) ); ?>" class="submit-brand-btn" style="padding: 0.85rem 2.2rem; font-size: 1rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-id-card-clip"></i> <?php echo esc_html( bdk_get_recruitment_btn_text() ); ?> ফরমটি পূরণ করুন
+              </a>
+            <?php else : ?>
+              <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 1.25rem; text-align: center; border-radius: 4px;">
+                <i class="fas fa-circle-info" style="font-size: 1.6rem; color: #dc2626; margin-bottom: 0.5rem; display: block;"></i>
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: #991b1b; margin-bottom: 0.4rem;">সাংবাদিক নিয়োগ কার্যক্রম বর্তমানে স্থগিত</h3>
+                <p style="color: #7f1d1d; margin: 0; font-size: 0.92rem;">
+                  <?php echo esc_html( bdk_get_recruitment_closed_message() ); ?>
+                </p>
+              </div>
+            <?php endif; ?>
           </div>
 
         </div>

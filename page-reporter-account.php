@@ -17,8 +17,11 @@ if ( is_user_logged_in() ) {
 
 get_header();
 
-$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'login';
-if ( isset( $_GET['reg_error'] ) || isset( $_GET['registered'] ) ) {
+$recruitment_enabled = bdk_is_recruitment_enabled();
+$active_tab          = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'login';
+if ( ! $recruitment_enabled && 'register' === $active_tab ) {
+	$active_tab = 'login';
+} elseif ( $recruitment_enabled && ( isset( $_GET['reg_error'] ) || isset( $_GET['registered'] ) ) ) {
 	$active_tab = 'register';
 }
 
@@ -37,8 +40,13 @@ delete_transient( 'bdk_login_errors' );
         <i class="fas fa-angle-right" style="font-size: 0.75rem;"></i>
         <span>সাংবাদিক পোর্টাল</span>
       </div>
-      <h1>ডিজিটাল সাংবাদিক নিয়োগ ও একাউন্ট পোর্টাল</h1>
-      <p>বস্তুনিষ্ঠ অনুসন্ধানী সাংবাদিকতায় যুক্ত হতে আবেদন করুন অথবা আপনার একাউন্টে লগইন করুন</p>
+      <?php if ( $recruitment_enabled ) : ?>
+        <h1>ডিজিটাল সাংবাদিক নিয়োগ ও একাউন্ট পোর্টাল</h1>
+        <p>বস্তুনিষ্ঠ অনুসন্ধানী সাংবাদিকতায় যুক্ত হতে আবেদন করুন অথবা আপনার একাউন্টে লগইন করুন</p>
+      <?php else : ?>
+        <h1>সাংবাদিক একাউন্ট ও ড্যাশবোর্ড পোর্টাল</h1>
+        <p>আপনার সাংবাদিক একাউন্টে লগইন করুন অথবা পাসওয়ার্ড রিসেট করুন</p>
+      <?php endif; ?>
     </div>
   </section>
 
@@ -51,9 +59,11 @@ delete_transient( 'bdk_login_errors' );
         <button type="button" onclick="switchAuthTab('login')" id="tabBtnLogin" class="auth-tab-btn <?php echo 'login' === $active_tab ? 'active' : ''; ?>" style="flex: 1; padding: 1rem; font-size: 1rem; font-weight: 700; border: none; background: transparent; cursor: pointer; color: var(--text-main); transition: all 0.2s;">
           <i class="fas fa-right-to-bracket"></i> লগইন করুন
         </button>
+        <?php if ( $recruitment_enabled ) : ?>
         <button type="button" onclick="switchAuthTab('register')" id="tabBtnRegister" class="auth-tab-btn <?php echo 'register' === $active_tab ? 'active' : ''; ?>" style="flex: 1; padding: 1rem; font-size: 1rem; font-weight: 700; border: none; background: transparent; cursor: pointer; color: var(--text-main); transition: all 0.2s;">
-          <i class="fas fa-user-pen"></i> সাংবাদিক নিয়োগ আবেদন
+          <i class="fas fa-user-pen"></i> <?php echo esc_html( bdk_get_recruitment_btn_text() ); ?> আবেদন
         </button>
+        <?php endif; ?>
         <button type="button" onclick="switchAuthTab('reset')" id="tabBtnReset" class="auth-tab-btn <?php echo 'reset' === $active_tab ? 'active' : ''; ?>" style="flex: 1; padding: 1rem; font-size: 1rem; font-weight: 700; border: none; background: transparent; cursor: pointer; color: var(--text-main); transition: all 0.2s;">
           <i class="fas fa-key"></i> পাসওয়ার্ড রিসেট
         </button>
@@ -103,9 +113,10 @@ delete_transient( 'bdk_login_errors' );
         </div>
 
         <!-- 2. DIGITAL RECRUITMENT / REGISTRATION FORM -->
+        <?php if ( $recruitment_enabled ) : ?>
         <div id="authSectionRegister" style="display: <?php echo 'register' === $active_tab ? 'block' : 'none'; ?>;">
           <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.5rem;">
-            <i class="fas fa-id-card-clip"></i> ডিজিটাল সাংবাদিক নিয়োগ আবেদন ফরম
+            <i class="fas fa-id-card-clip"></i> ডিজিটাল <?php echo esc_html( bdk_get_recruitment_btn_text() ); ?> আবেদন ফরম
           </h2>
           <p style="font-size: 0.88rem; color: var(--text-body); margin-bottom: 1.25rem;">
             অনলাইনে আবেদন করার পর আপনার তথ্য ও সিভি পর্যালোচনা করে প্রেস আইডি কার্ড ও রিপোর্টার ড্যাশবোর্ড অনুমোদন দেওয়া হবে।
@@ -184,6 +195,20 @@ delete_transient( 'bdk_login_errors' );
             </button>
           </form>
         </div>
+        <?php else : ?>
+        <div id="authSectionRegister" style="display: <?php echo 'register' === $active_tab ? 'block' : 'none'; ?>; text-align: center; padding: 2.5rem 1rem;">
+          <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-md); padding: 2rem 1.5rem; max-width: 550px; margin: 0 auto;">
+            <i class="fas fa-ban" style="font-size: 2.5rem; color: #ef4444; margin-bottom: 0.75rem; display: inline-block;"></i>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #991b1b; margin-bottom: 0.5rem;">সাংবাদিক নিয়োগ কার্যক্রম স্থগিত</h3>
+            <p style="color: #7f1d1d; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.25rem;">
+              <?php echo esc_html( bdk_get_recruitment_closed_message() ); ?>
+            </p>
+            <button type="button" onclick="switchAuthTab('login')" class="submit-brand-btn" style="padding: 0.6rem 1.4rem;">
+              <i class="fas fa-right-to-bracket"></i> লগইন পোর্টালে যান
+            </button>
+          </div>
+        </div>
+        <?php endif; ?>
 
         <!-- 3. PASSWORD RESET FORM -->
         <div id="authSectionReset" style="display: <?php echo 'reset' === $active_tab ? 'block' : 'none'; ?>;">
